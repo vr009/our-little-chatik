@@ -17,19 +17,22 @@ type AuthUseCase struct {
 }
 
 func NewAuthUseCase(
-	userRepo *auth.Repo,
+	userRepo auth.Repo,
 	salt string,
 	key []byte,
 	dur time.Duration) *AuthUseCase {
 	return &AuthUseCase{
-		repo:           *userRepo,
+		repo:           userRepo,
 		hashSalt:       salt,
 		signingKey:     key,
 		expireDuration: dur,
 	}
 }
 
-func (a *AuthUseCase) SignUp(username, password string) error {
+func (a *AuthUseCase) SignUp(username, password string) (string, error) {
+	if username == "" {
+		return "", errors.New("bad")
+	}
 	pswd := sha256.New()
 	pswd.Write([]byte(password))
 	pswd.Write([]byte(a.hashSalt))
@@ -39,10 +42,10 @@ func (a *AuthUseCase) SignUp(username, password string) error {
 		Password: fmt.Sprintf("%x", pswd.Sum(nil)),
 	}
 
-	return a.repo.CreateUser(user)
+	return "ZDES BUDET TOKEN", a.repo.CreateUser(user)
 }
 
-func (a *AuthUseCase) SignIn(username, password string) error {
+func (a *AuthUseCase) SignIn(username, password string) (string, error) {
 	pswd := sha256.New()
 	pswd.Write([]byte(password))
 	pswd.Write([]byte(a.hashSalt))
@@ -55,10 +58,10 @@ func (a *AuthUseCase) SignIn(username, password string) error {
 	}
 
 	if DBpswd, err := a.repo.GetUser(user); err != nil {
-		return err
+		return "", err
 	} else if DBpswd != compStr {
-		return errors.New(fmt.Sprintf("not correct password\n"))
+		return "", errors.New(fmt.Sprintf("not correct password\n"))
 	}
 
-	return nil
+	return "zdes budet token", nil
 }

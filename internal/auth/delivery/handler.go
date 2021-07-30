@@ -19,6 +19,11 @@ func NewAuthHandler(UCase auth.UseCase) *AuthHandler {
 }
 
 func MiddleWare(w http.ResponseWriter, r *http.Request) models.User {
+
+	// temporary thing< that is bad
+	w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+
 	var user models.User
 	body := make([]byte, 0, 25)
 
@@ -29,7 +34,7 @@ func MiddleWare(w http.ResponseWriter, r *http.Request) models.User {
 
 	defer r.Body.Close()
 
-	if err := json.Unmarshal(body, &user); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Print(err)
 	}
@@ -41,22 +46,30 @@ func (a *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 
 	user := MiddleWare(w, r)
 
-	if err := a.UseCase.SignUp(user); err != nil {
+	if mytoken, err := a.UseCase.SignUp(user.UserName, user.Password); err != nil {
 		w.WriteHeader(http.StatusForbidden)
 		log.Print(err)
+	} else {
+		//w.WriteHeader(http.StatusOK)
+		w.Write([]byte(mytoken))
+		r.Method = "GET"
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 	}
+	log.Print(user.UserName)
 
-	w.WriteHeader(http.StatusOK)
 }
 
 func (a *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 
 	user := MiddleWare(w, r)
 
-	if err := a.UseCase.SignIn(user); err != nil {
+	if mytoken, err := a.UseCase.SignIn(user.UserName, user.Password); err != nil {
 		w.WriteHeader(http.StatusForbidden)
 		log.Print(err)
+	} else {
+		//w.WriteHeader(http.StatusOK)
+		w.Write([]byte(mytoken))
+		r.Method = "GET"
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 	}
-
-	w.WriteHeader(http.StatusOK)
 }

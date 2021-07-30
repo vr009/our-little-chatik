@@ -8,6 +8,6 @@ type Repo interface {
 }
 
 type UseCase interface {
-	SignIn(User models.User) error
-	SignUp(User models.User) error
+	SignIn(username, password string) (string, error)
+	SignUp(username, password string) (string, error)
 }
