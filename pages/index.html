@@ -1,9 +1,87 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <head>
-	<title> LOL </title>
+	<link rel="stylesheet" href="/css/style.css">
+	<title> Welcome page </title>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+	<style type="text/css">
+	.login_form_wrap {
+	height: 450px;
+	}
+	</style>
 </head>
 <body>
+<!--Start of header -->
+<div class="page_header_wrap">
+		<div class="header_content">
+			<div class="header_menu">
+				<ul>
+					<li> <a href="index.html"> Log in </a> </li>
+					<li> <a href="signup.html"> Sign up </a> </li>
+					<li> <a href="/about"> About </a> </li>
+				</ul>
+			</div>
+	</div>
+</div>
+<!--End of header -->
+<!--Start of main content -->
+<div class="first_screen">
+	<div class="container">
+		<div class="login_form_wrap">
+			<div style="margin: auto; margin-top: 30px" field="welcome_message">
+				<p id="wlcmsg"> Welcome, new man! </p>
+			</div>
 
+			<p style="margin: auto;"> Please, enter your accout. Or <a href="signup.html"> Sign up</a> </p>
+			<div id="login_form">
+				<form name="authentication" method="post">
+					<ul style="padding:0; list-style-type: none">
+						<li>
+							<label for="login">Login:</label>
+							<input type="text" id="login" name="user_login">
+						</li>
+						<li>
+							<label for="password">Password:</label>
+							<input type="password" id="password" name="user_password">
+						</li>
+					</ul>
+				</form>
+				<button onclick="sendJSON()" id="button_login" class="button">Log in</button>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+<script type="text/javascript">
+	// Обращение
+	var name = 'slavik';
+	document.getElementById('wlcmsg').innerHTML = `Welcome, ${name}`;
+
+	var data = {};
+	function sendJSON() {
+		console.log("побежали");
+		let authform = document.forms["authentication"];
+		let fd = new FormData(authform);
+		for (let [key, prop] of fd) {
+			data[key] = prop;
+		}
+		data2 = JSON.stringify(data);
+		console.log(`data: ${data2}`);
+
+		var req = new XMLHttpRequest();
+		req.open("POST", "http://192.168.56.1:56126/", false);
+		console.log("data send1")
+		req.send(data2);
+		console.log("data send2")
+		console.log(`req: ${req.responseText}`);
+		// → This is the content of data.txt
+	};
+
+</script>
 </body>
 </html>
