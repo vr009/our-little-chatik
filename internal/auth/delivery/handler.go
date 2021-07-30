@@ -18,8 +18,7 @@ func NewAuthHandler(UCase auth.UseCase) *AuthHandler {
 	}
 }
 
-func (a *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
-
+func MiddleWare(w http.ResponseWriter, r *http.Request) models.User {
 	var user models.User
 	body := make([]byte, 0, 25)
 
@@ -34,6 +33,13 @@ func (a *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Print(err)
 	}
+
+	return user
+}
+
+func (a *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
+
+	user := MiddleWare(w, r)
 
 	if err := a.UseCase.SignUp(user); err != nil {
 		w.WriteHeader(http.StatusForbidden)
@@ -43,21 +49,9 @@ func (a *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (a *AuthHandler) SignIn(w http.ResponseWriter, r http.Request) {
-	var user models.User
-	body := make([]byte, 0, 25)
+func (a *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 
-	if _, err := r.Body.Read(body); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		log.Print(err)
-	}
-
-	defer r.Body.Close()
-
-	if err := json.Unmarshal(body, &user); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		log.Print(err)
-	}
+	user := MiddleWare(w, r)
 
 	if err := a.UseCase.SignIn(user); err != nil {
 		w.WriteHeader(http.StatusForbidden)
