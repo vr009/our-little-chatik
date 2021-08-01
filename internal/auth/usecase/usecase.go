@@ -63,5 +63,5 @@ func (a *AuthUseCase) SignIn(username, password string) (string, error) {
 		return "", errors.New(fmt.Sprintf("not correct password\n"))
 	}
 
-	return "zdes budet token", nil
+	return "password ok zdes budet token", nil
 }

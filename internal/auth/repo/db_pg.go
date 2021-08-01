@@ -57,13 +57,14 @@ func (repo *PGRepo) CreateUser(user models.User) error {
 
 func (repo *PGRepo) GetUser(user models.User) (string, error) {
 
-	out := ""
 	if repo.service != nil {
-		res, err := repo.service.Query(fmt.Sprintf("select user_id from %s;", repo.Table_name))
+		var out string
+		str := fmt.Sprintf("select password from %s where username='%s';", repo.Table_name, user.UserName)
+		res := repo.service.QueryRow(str)
+		err := res.Scan(&out)
 		if err != nil {
 			return "", err
 		}
-		res.Scan(&out)
 		return out, nil
 	}
 	return "", errors.New("No connection")

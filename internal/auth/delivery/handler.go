@@ -50,10 +50,8 @@ func (a *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusForbidden)
 		log.Print(err)
 	} else {
-		w.WriteHeader(http.StatusOK)
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		w.Write([]byte(mytoken))
-		//r.Method = "GET"
-		//http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 	}
 	log.Print(user.UserName)
 
@@ -67,9 +65,7 @@ func (a *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusForbidden)
 		log.Print(err)
 	} else {
-		//w.WriteHeader(http.StatusOK)
-		w.Write([]byte(mytoken))
-		r.Method = "GET"
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		w.Write([]byte(mytoken)) //хз
 	}
 }
