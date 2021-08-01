@@ -3,6 +3,7 @@
 <head>
 	<link rel="stylesheet" href="/css/style.css">
 	<title> Welcome page </title>
+	<script type="text/javascript" src="js/main.js"></script>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,6 +15,7 @@
 	}
 	</style>
 </head>
+
 <body>
 <!--Start of header -->
 <div class="page_header_wrap">
@@ -42,46 +44,21 @@
 					<ul style="padding:0; list-style-type: none">
 						<li>
 							<label for="login">Login:</label>
-							<input type="text" id="login" name="user_login">
+							<input class="user_login" type="text" id="login" name="user_login">
 						</li>
 						<li>
 							<label for="password">Password:</label>
-							<input type="password" id="password" name="user_password">
+							<input class="user_password" type="password" id="password" name="user_password">
 						</li>
 					</ul>
 				</form>
-				<button onclick="sendJSON()" id="button_login" class="button">Log in</button>
+				<button onclick="formHandler('authentication')" id="button_login" class="button"> Log in </button>
 			</div>
 		</div>
 	</div>
-
 </div>
-
 <script type="text/javascript">
-	// Обращение
-	var name = 'slavik';
-	document.getElementById('wlcmsg').innerHTML = `Welcome, ${name}`;
-
-	var data = {};
-	function sendJSON() {
-		console.log("побежали");
-		let authform = document.forms["authentication"];
-		let fd = new FormData(authform);
-		for (let [key, prop] of fd) {
-			data[key] = prop;
-		}
-		data2 = JSON.stringify(data);
-		console.log(`data: ${data2}`);
-
-		var req = new XMLHttpRequest();
-		req.open("POST", "http://192.168.56.1:56126/", false);
-		console.log("data send1")
-		req.send(data2);
-		console.log("data send2")
-		console.log(`req: ${req.responseText}`);
-		// → This is the content of data.txt
-	};
-
+	welcomeUser("Kostik","wlcmsg")
 </script>
 </body>
 </html>
