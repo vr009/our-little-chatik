@@ -4,7 +4,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/google/uuid"
+	_ "github.com/lib/pq"
 	"our-little-chatik/internal/models"
+	"strings"
 )
 
 type PGRepo struct {
@@ -13,12 +16,22 @@ type PGRepo struct {
 	Table_name string
 }
 
-func StartInit() {
-
+func NewPGRepo() *PGRepo {
+	return &PGRepo{Db_name: "postgres", Table_name: "Users"}
 }
 
-func (repo *PGRepo) initDB() error {
-	connStr := "user=postgres password=admin sslmode=disable"
+func (repo *PGRepo) StartInit() error {
+	create_query := "create table user (id serial auto_increment, username varchar(50), password varchar(30));"
+	if repo.service != nil {
+		if _, err := repo.service.Exec(create_query); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (repo *PGRepo) InitDB() error {
+	connStr := "user=postgres password=admin dbname=postgres sslmode=disable"
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
@@ -32,7 +45,10 @@ func (repo *PGRepo) initDB() error {
 
 func (repo *PGRepo) CreateUser(user models.User) error {
 	if repo.service != nil {
-		if _, err := repo.service.Exec("insert into %s values (%s, %s);", repo.Table_name, user.UserName, user.Password); err != nil {
+		uuidWithHyphen := uuid.New()
+		uuid := strings.Replace(uuidWithHyphen.String(), "-", "", -1)
+		str := fmt.Sprintf("insert into %s values ( '%s' ,'%s', '%s');", repo.Table_name, uuid, user.UserName, user.Password)
+		if _, err := repo.service.Exec(str); err != nil {
 			return err
 		}
 	}
@@ -43,7 +59,7 @@ func (repo *PGRepo) GetUser(user models.User) (string, error) {
 
 	out := ""
 	if repo.service != nil {
-		res, err := repo.service.Query(fmt.Sprintf("select user_id from %s", repo.Db_name))
+		res, err := repo.service.Query(fmt.Sprintf("select user_id from %s;", repo.Table_name))
 		if err != nil {
 			return "", err
 		}

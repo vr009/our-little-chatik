@@ -11,7 +11,11 @@ import (
 )
 
 func main() {
-	repom := repo.NewmockRepo()
+	//	repom := repo.NewmockRepo()
+	repom := repo.NewPGRepo()
+	repom.InitDB()
+	defer repom.Close()
+
 	usecase := usecase.NewAuthUseCase(repom, "brr", []byte("brr"), time.Duration(15))
 	handler := delivery.NewAuthHandler(usecase)
 
