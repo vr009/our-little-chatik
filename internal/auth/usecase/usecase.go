@@ -4,6 +4,9 @@ import (
 	"crypto/sha256"
 	"errors"
 	"fmt"
+	"github.com/dgrijalva/jwt-go/v4"
+	"log"
+	"net/http"
 	"our-little-chatik/internal/auth"
 	"our-little-chatik/internal/models"
 	"time"
@@ -29,9 +32,34 @@ func NewAuthUseCase(
 	}
 }
 
-func (a *AuthUseCase) SignUp(username, password string) (string, error) {
-	if username == "" {
-		return "", errors.New("bad")
+type Claims struct {
+	jwt.StandardClaims
+	UUID string
+}
+
+func ParseToken(AccesToken string, SigningKey []byte) (string, error) {
+	token, err := jwt.ParseWithClaims(AccesToken, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+		return SigningKey, nil
+	})
+
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+
+	if claims, ok := token.Claims.(*Claims); ok && token.Valid {
+		return claims.UUID, nil
+	}
+
+	return "", nil
+}
+
+func (a *AuthUseCase) SignUp(username, password string) error {
+	if username == "" || password == "" {
+		return errors.New("bad")
 	}
 	pswd := sha256.New()
 	pswd.Write([]byte(password))
@@ -42,10 +70,19 @@ func (a *AuthUseCase) SignUp(username, password string) (string, error) {
 		Password: fmt.Sprintf("%x", pswd.Sum(nil)),
 	}
 
-	return "ZDES BUDET TOKEN", a.repo.CreateUser(user)
+	if err := a.repo.CreateUser(user); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (a *AuthUseCase) SignIn(username, password string) (string, error) {
+
+	if username == "" || password == "" {
+		return "", errors.New("bad")
+	}
+
 	pswd := sha256.New()
 	pswd.Write([]byte(password))
 	pswd.Write([]byte(a.hashSalt))
@@ -57,11 +94,38 @@ func (a *AuthUseCase) SignIn(username, password string) (string, error) {
 		Password: fmt.Sprintf("%x", pswd.Sum(nil)),
 	}
 
-	if DBpswd, err := a.repo.GetUser(user); err != nil {
+	uuid, DBpswd, err := a.repo.GetUser(user)
+
+	if err != nil {
 		return "", err
 	} else if DBpswd != compStr {
 		return "", errors.New(fmt.Sprintf("not correct password\n"))
 	}
 
-	return "password ok zdes budet token", nil
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &Claims{
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: jwt.At(time.Now().Add(a.expireDuration)),
+			IssuedAt:  jwt.At(time.Now()),
+		},
+		UUID: uuid,
+	})
+
+	return token.SignedString(a.signingKey)
+}
+
+func (a *AuthUseCase) AuthMiddleWare(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println(r.RequestURI)
+		token, err := r.Cookie("ssid")
+		if err != nil {
+			http.Error(w, "Forbidden", http.StatusForbidden)
+		}
+
+		if userId, err := ParseToken(token.Value, a.signingKey); err != nil {
+			http.Error(w, "Forbidden", http.StatusForbidden)
+		} else {
+			log.Println(userId)
+			next.ServeHTTP(w, r)
+		}
+	})
 }

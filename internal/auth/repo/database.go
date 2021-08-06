@@ -20,12 +20,12 @@ func (rep mockRepo) CreateUser(user models.User) error {
 	return nil
 }
 
-func (rep mockRepo) GetUser(user models.User) (string, error) {
+func (rep mockRepo) GetUser(user models.User) (string, string, error) {
 	for _, value := range rep.users {
 		if m, ok := value[user.UserName]; ok {
-			return m, nil
+			return "", m, nil
 		}
 	}
 
-	return "", errors.New("no user")
+	return "", "", errors.New("no user")
 }

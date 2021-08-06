@@ -2,6 +2,7 @@ package delivery
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"our-little-chatik/internal/auth"
@@ -34,7 +35,7 @@ func MiddleWare(w http.ResponseWriter, r *http.Request) models.User {
 
 	defer r.Body.Close()
 
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil || user.UserName == "" || user.Password == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Print(err)
 	}
@@ -46,12 +47,12 @@ func (a *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 
 	user := MiddleWare(w, r)
 
-	if mytoken, err := a.UseCase.SignUp(user.UserName, user.Password); err != nil {
+	if err := a.UseCase.SignUp(user.UserName, user.Password); err != nil {
 		w.WriteHeader(http.StatusForbidden)
 		log.Print(err)
 	} else {
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		w.Write([]byte(mytoken))
+		//w.Header().Set("Set-Cookie",fmt.Sprintf("ssid=%s; path=/; HttpOnly",mytoken))
+		http.Redirect(w, r, "/auth/signin", http.StatusSeeOther)
 	}
 	log.Print(user.UserName)
 
@@ -62,10 +63,10 @@ func (a *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 	user := MiddleWare(w, r)
 
 	if mytoken, err := a.UseCase.SignIn(user.UserName, user.Password); err != nil {
-		w.WriteHeader(http.StatusForbidden)
+		w.WriteHeader(http.StatusUnauthorized)
 		log.Print(err)
 	} else {
+		w.Header().Set("Set-Cookie", fmt.Sprintf("ssid=%s; path=/; HttpOnly", mytoken))
 		http.Redirect(w, r, "/", http.StatusSeeOther)
-		w.Write([]byte(mytoken)) //хз
 	}
 }

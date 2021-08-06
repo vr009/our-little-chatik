@@ -16,16 +16,19 @@ func main() {
 	repom.InitDB()
 	defer repom.Close()
 
-	usecase := usecase.NewAuthUseCase(repom, "brr", []byte("brr"), time.Duration(15))
+	usecase := usecase.NewAuthUseCase(repom, "brr", []byte("brr"), time.Duration(150000000000))
 	handler := delivery.NewAuthHandler(usecase)
 
 	r := mux.NewRouter()
 	r.HandleFunc("/auth/signup", handler.SignUp).Methods("POST")
 	r.HandleFunc("/auth/signin", handler.SignIn).Methods("POST")
-	r.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
+
+	s := r.PathPrefix("").Subrouter()
+	s.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
 		writer.WriteHeader(http.StatusOK)
 		writer.Write([]byte("Got it"))
 	}).Methods("GET")
+	s.Use(usecase.AuthMiddleWare)
 
 	srv := &http.Server{
 		Handler: r,

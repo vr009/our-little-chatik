@@ -55,19 +55,28 @@ func (repo *PGRepo) CreateUser(user models.User) error {
 	return nil
 }
 
-func (repo *PGRepo) GetUser(user models.User) (string, error) {
+func (repo *PGRepo) GetUser(user models.User) (string, string, error) {
 
 	if repo.service != nil {
-		var out string
+		var pswd string
 		str := fmt.Sprintf("select password from %s where username='%s';", repo.Table_name, user.UserName)
 		res := repo.service.QueryRow(str)
-		err := res.Scan(&out)
+		err := res.Scan(&pswd)
 		if err != nil {
-			return "", err
+			return "", "", err
 		}
-		return out, nil
+
+		var uuid string
+		str2 := fmt.Sprintf("select user_id from %s where username='%s';", repo.Table_name, user.UserName)
+		res2 := repo.service.QueryRow(str2)
+		err2 := res2.Scan(&uuid)
+		if err2 != nil {
+			return "", "", err
+		}
+
+		return uuid, pswd, nil
 	}
-	return "", errors.New("No connection")
+	return "", "", errors.New("No connection")
 }
 
 func (repo *PGRepo) Close() {
