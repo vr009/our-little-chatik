@@ -21,7 +21,7 @@ func NewPGRepo() *PGRepo {
 }
 
 func (repo *PGRepo) StartInit() error {
-	create_query := "create table user (id serial auto_increment, username varchar(50), password varchar(30));"
+	create_query := "create table Users (user_id uuid default uuid_generate_v4(), username varchar(50) primary key not null, password varchar(30));"
 	if repo.service != nil {
 		if _, err := repo.service.Exec(create_query); err != nil {
 			return err
