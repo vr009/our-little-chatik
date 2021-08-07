@@ -3,27 +3,30 @@
 
 const getFormData = (formName) => {
     const data = {};
+    const userNameMain = '';
     console.log("побежали отправлять");
     const authform = document.forms[formName];
     const fd = new FormData(authform);
     for (let [key, prop] of fd) {
         data[key] = prop;
-        console.log(data[key]);
     };
     dataToSend = JSON.stringify(data);
     console.log(`data: ${dataToSend}`);
+    console.log(`name: ${data.user_login}`);
+    console.log(`password: ${data.user_password}`);
+   // userNameMain = fd.data[]
 }
 
-function sendJSON(formName) {
-    getFormData(formName);
-    const req = new XMLHttpRequest();
-    req.open("POST","/example/text.txt",false);
-    console.log("start data sending")
-    req.send(dataToSend);
-    console.log("data sent")
-    console.log(req.status, req.statusText);
-    console.log(`req: ${req.responseText}`);
-};
+// function sendJSON(formName) {
+//     getFormData(formName);
+//     const req = new XMLHttpRequest();
+//     req.open("POST","/example/text.txt",false);
+//     console.log("start data sending")
+//     req.send(dataToSend);
+//     console.log("data sent")
+//     console.log(req.status, req.statusText);
+//     console.log(`req: ${req.responseText}`);
+// };
 
 const sayError = () => {
     alert ("Please, check fields of form, at least one of these are empty");
@@ -47,23 +50,49 @@ function validateLoginForm ( ) {
 };
 
 const formHandler = (formName) => {
+    let callback
     if (validateLoginForm()) {
-        sendJSON(formName);
-        setTimeout(document.authentication.reset(),2000);
-        redirectTo("messages.html")
-    }
+            let sending = new Promise(function (resolve,reject) {
+                getFormData(formName);
+                const req = new XMLHttpRequest();
+                req.open("POST","/example/text.txt",false);
+                console.log("start data sending")
+                req.send(dataToSend);
+                console.log("data sent")
+                console.log(req.status, req.statusText);
+                console.log(`req: ${req.responseText}`);
 
-}
+                if (req.status === 200) {
+                    resolve(callback = true)
+                } else {
+                    reject(callback = false)
+                }
+            })
+
+            sending.then(() => {
+                setTimeout(document.authentication.reset(),1000);
+                console.log('Всё ок, код 200 инфа сотка')
+                redirectTo("messages.html")
+            })
+            sending.catch(() => {
+                console.log('Всё пошло по пизде, наверн код 200 не вернулося(')
+            })
+        }
+};
 
 
 
 // Обращение к пользователю
 const welcomeUser = (name,blockID) => {
-    document.getElementById(`${blockID}`).innerHTML = `Welcome, ${name}`;
+    if (userNameMain = '') {
+        document.getElementById(`${blockID}`).innerHTML = `Welcome, ${name}`;
+    } else {
+        document.getElementById(`${blockID}`).innerHTML = `Welcome, ${user_login}`;
+    }
 };
 
 const logOut = () => {
-  alert("Вы не можете выйти, тк разрабы дураки и не знают как это сделать.")
+  alert("Вы не можете выйти, тк разрабы дураки и ПОКА не знают как это сделать.")
 };
 
 const redirectTo = (link) => {

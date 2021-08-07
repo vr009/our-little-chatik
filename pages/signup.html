@@ -1,19 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <head>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="css/style.css">
     <title> Sign up </title>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script type="text/javascript" src="/js/main.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style type="text/css">
-    .login_form_wrap {
-        height: 450px !important;
-    }
 
-    </style>
 </head>
 <body>
 <!--Start of header -->
@@ -30,33 +25,35 @@
 </div>
 <!--End of header -->
 <!--Start of main content -->
-<div class="first_screen">
     <div class="container">
         <div class="login_form_wrap">
-            <h1 style="margin: 30px auto auto;"> Welcome </h1>
-            <p style="margin: auto;"> Please, enter your data to create new account. Or <a href="index.html"> log in</a> </p>
-            <form id="login_form" action="/auth.php" method="post">
-                <ul style="list-style-type: none">
-                    <li>
-                        <label for="login">Your Name&Surname</label>
-                        <label for="email"></label><input type="text" id="email" name="user_email">
-                    </li>
-                    <li>
-                        <label for="login">Login:</label>
-                        <input type="text" id="login" name="user_login">
-                    </li>
-                    <li>
-                        <label for="password">Password:</label>
-                        <input type="password" id="password" name="user_password">
-                    </li>
-                    <li class="button">
-                        <button class="button" type="submit">Log in</button>
-                    </li>
-                </ul>
-            </form>
+            <p id="wlcmsg"> Welcome, new man! </p>
+            <p class="wlcmsg_description" > Please, create your new account. Or <a href="index.html"> Log in</a> </p>
+            <div id="login_form">
+                <form name="signing_up" method="post">
+                    <ul style="padding:0; list-style-type: none">
+                        <li>
+                            <label for="login">Your first name:</label>
+                            <input class="user_firstName" type="text" id="name" name="Firstname">
+                        </li>
+                        <li>
+                            <label for="login">Your last name:</label>
+                            <input class="user_firstName" type="text" id="lastName" name="Lastname">
+                        </li>
+                        <li>
+                            <label for="login">Login:</label>
+                            <input class="user_login" type="text" id="login" name="Username">
+                        </li>
+                        <li>
+                            <label for="password">Password:</label>
+                            <input class="user_password" type="password" id="password" name="Password">
+                        </li>
+                    </ul>
+                </form>
+                <button onclick="formHandler('signing_up')" id="button_login" class="button"> Sign up! </button>
+            </div>
         </div>
     </div>
-</div>
 </body>
 <script>
 

@@ -2,17 +2,25 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <head>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="css/style.css">
+
     <title> Messages </title>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-    <script type="text/javascript" src="/js/main.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
+<!--Start of header -->
 <div class="page_header_wrap">
     <div class="header_content">
+        <div class="headerUser">
+            <ul>
+                <li id="headerUserName"> Your name </li>
+            </ul>
+        </div>
+
         <div class="header_menu">
             <ul>
                 <li> <a onclick="logOut()"> Log out </a> </li>
@@ -22,12 +30,21 @@
     </div>
 </div>
 <!--End of header -->
-<div style="margin-top: 100px">
-    <h1 id="welcomeUsers" align="center"> Welcome, human! </h1>
-    <h1 align="center"> You are inside! Congrats! </h1>
+<div class="container">
+
+    <div class="column left_column" >
+        <div style="">
+            <h2 id="welcomeUsers" align="center"> Welcome, human! </h2>
+        </div>
+    </div>
+    <div class="column main_column">
+            <h2 align="center"> You are inside! Congrats! </h2>
+    </div>
 </div>
+
 <script type="text/javascript">
     welcomeUser("Kostik","welcomeUsers")
 </script>
+
 </body>
 </html>

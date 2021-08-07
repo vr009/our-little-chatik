@@ -1,6 +1,14 @@
-.body {
-    margin: 0;
+* {
     font-family: 'Montserrat', sans-serif;
+}
+
+ul {
+    list-style-type:none;
+    padding: 0;
+}
+
+body{
+    margin: 0;
 }
 
 .button {
@@ -17,6 +25,7 @@
 
 .page_header_wrap {
     background-color: #6691c6;
+    margin: 0;
     position: absolute;
     top: 0;
     left: 0;
@@ -26,26 +35,47 @@
 }
 
 .container {
+    position: relative;
+    top: 60px;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1250px;
     margin: 0 auto;
 }
 
-.first_screen {
-    margin-top: 150px;
+.header_content {
+    margin: auto;
     width: 100%;
-    height: 650px;
+    max-width: 1250px;
+    height: 100%;
 }
 
-.header_content {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    position: relative;
+.header_content .ul {
 
+}
+
+.headerUser{
+    position: absolute;
+    height: 100%;
+    display: inline-block;
+}
+
+.headerUser ul{
+    display: inline-block;
+    padding-left: 0;
+}
+.headerUser li{
+    width: 150px;
+    padding: 3px 15px;
+    display: inline-block;
+    color: #fff;
+    font-weight: bold;
+}
+
+.header_menu {
+    position: absolute;
+    left: 700px;
+    height: 100%;
+    display: inline-block;
 }
 
 .logo_wrap {
@@ -55,21 +85,13 @@
     /*background-color: red;*/
 }
 
-.header_menu {
-    margin: auto;
-    height: 25px;
-    display: table-cell;
-}
 .header_menu ul{
-    list-style-type:none;
     display: inline-block;
-    margin: 0;
     padding-left: 0;
 }
 .header_menu li{
-    width: 55px;
+    width: 70px;
     padding: 3px 15px;
-    margin: 0 0;
     display: inline-block;
 }
 .header_menu a{
@@ -98,14 +120,29 @@
 
 .login_form_wrap{
     margin:auto;
+    margin-top: 30px !important;
     align-content: center;
     width: 550px;
     background-color: #f2f2f2;
-    border: #6691c6;
-    display: flex;
-    flex-direction: column;
+    border-radius: 8px;
 }
 
+.login_form_wrap #wlcmsg{
+    text-transform: capitalize !important;
+    font-weight: bold;
+}
+
+#wlcmsg{
+    margin: 0;
+    text-align:center;
+    padding-top: 40px;
+}
+
+.wlcmsg_description{
+    text-align:center;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
 
 
 #auth {
@@ -122,6 +159,7 @@ input {
 #login_form {
     margin: auto;
     width: 70%;
+    padding-bottom: 40px;
 }
 
 #login_form form {
@@ -131,7 +169,14 @@ input {
 
 #button_login {
     width: 100%;
-    height: 30px;
+    height: 40px;
+    border-radius: 8px;
+}
+
+#button_login :hover{
+    background-color: #4578bb;
+    color: #f2f2f2;
+    border-width: 0;
 }
 
 .form_alert {
@@ -140,4 +185,39 @@ input {
 
 .welcomeUsers {
 
+}
+
+.column{
+    display: inline-block;
+    box-sizing: border-box ;
+    margin: 0;
+    float: left;
+    height: 1000px;
+}
+
+.column h2{
+    color: #f3f3f3;
+    width: 100%;
+    padding: 10px 0;
+    margin: auto;
+}
+
+.left_column h2{
+    background-color: #333333;
+}
+
+.main_column h2{
+    color: #333333;
+    background-color: #f3f3f3;
+}
+
+.left_column {
+    width: 30%;
+    background-color: #f3f3f3;
+
+}
+
+.main_column {
+    width: 70%;
+    background-color: #f9f9f9;
 }

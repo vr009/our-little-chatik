@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <head>
-	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="css/style.css">
 	<title> Welcome page </title>
 	<script type="text/javascript" src="js/main.js"></script>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
@@ -9,11 +9,6 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-	<style type="text/css">
-	.login_form_wrap {
-	height: 450px;
-	}
-	</style>
 </head>
 
 <body>
@@ -31,24 +26,20 @@
 </div>
 <!--End of header -->
 <!--Start of main content -->
-<div class="first_screen">
 	<div class="container">
 		<div class="login_form_wrap">
-			<div style="margin: auto; margin-top: 30px" field="welcome_message">
 				<p id="wlcmsg"> Welcome, new man! </p>
-			</div>
-
-			<p style="margin: auto;"> Please, enter your accout. Or <a href="signup.html"> Sign up</a> </p>
+				<p class="wlcmsg_description" > Please, enter your account. Or <a href="signup.html"> Sign up</a> </p>
 			<div id="login_form">
 				<form name="authentication" method="post">
 					<ul style="padding:0; list-style-type: none">
 						<li>
 							<label for="login">Login:</label>
-							<input class="user_login" type="text" id="login" name="user_login">
+							<input class="user_login" type="text" id="login" name="Username">
 						</li>
 						<li>
 							<label for="password">Password:</label>
-							<input class="user_password" type="password" id="password" name="user_password">
+							<input class="user_password" type="password" id="password" name="Password">
 						</li>
 					</ul>
 				</form>
@@ -56,7 +47,6 @@
 			</div>
 		</div>
 	</div>
-</div>
 <script type="text/javascript">
 	welcomeUser("Kostik","wlcmsg")
 </script>
