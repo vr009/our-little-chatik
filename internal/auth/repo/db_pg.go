@@ -49,7 +49,7 @@ func (repo *PGRepo) InitDB() error {
 	return nil
 }
 
-func (repo *PGRepo) CreateUser(user models.User) error {
+func (repo *PGRepo) CreateUser(user models.User) (string, error) {
 	if repo.service != nil {
 		uuidWithHyphen := uuid.New()
 		uuid := strings.Replace(uuidWithHyphen.String(), "-", "", -1)
@@ -58,10 +58,10 @@ func (repo *PGRepo) CreateUser(user models.User) error {
 			repo.Table_name, uuid, user.Username, user.Password, user.Firstname, user.Lastname)
 
 		if _, err := repo.service.Exec(str); err != nil {
-			return err
+			return uuid, err
 		}
 	}
-	return nil
+	return "", nil
 }
 
 func (repo *PGRepo) GetUser(user models.User) (string, string, error) {

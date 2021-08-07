@@ -14,10 +14,10 @@ func NewmockRepo() mockRepo {
 	return mockRepo{count: 0, users: map[int]map[string]string{}}
 }
 
-func (rep mockRepo) CreateUser(user models.User) error {
+func (rep mockRepo) CreateUser(user models.User) (string, error) {
 	rep.users[rep.count] = map[string]string{user.Username: user.Password}
 	rep.count++
-	return nil
+	return "", nil
 }
 
 func (rep mockRepo) GetUser(user models.User) (string, string, error) {

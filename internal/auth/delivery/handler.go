@@ -20,8 +20,7 @@ func NewAuthHandler(UCase auth.UseCase) *AuthHandler {
 }
 
 func MiddleWare(w http.ResponseWriter, r *http.Request) models.User {
-
-	// temporary thing< that is bad
+	// temporary thing
 	w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 
@@ -47,12 +46,14 @@ func (a *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 
 	user := MiddleWare(w, r)
 
-	if err := a.UseCase.SignUp(user); err != nil {
+	token, err := a.UseCase.SignUp(user)
+
+	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
 		log.Print(err)
 	} else {
-		//w.Header().Set("Set-Cookie",fmt.Sprintf("ssid=%s; path=/; HttpOnly",mytoken))
-		http.Redirect(w, r, "/auth/signin", http.StatusSeeOther)
+		w.Header().Set("Set-Cookie", fmt.Sprintf("ssid=%s; path=/; HttpOnly", token))
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 	log.Print(user.Username)
 
@@ -62,11 +63,11 @@ func (a *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 
 	user := MiddleWare(w, r)
 
-	if mytoken, err := a.UseCase.SignIn(user); err != nil {
+	if token, err := a.UseCase.SignIn(user); err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		log.Print(err)
 	} else {
-		w.Header().Set("Set-Cookie", fmt.Sprintf("ssid=%s; path=/; HttpOnly", mytoken))
+		w.Header().Set("Set-Cookie", fmt.Sprintf("ssid=%s; path=/; HttpOnly", token))
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }

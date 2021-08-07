@@ -57,9 +57,9 @@ func ParseToken(AccesToken string, SigningKey []byte) (string, error) {
 	return "", nil
 }
 
-func (a *AuthUseCase) SignUp(User models.User) error {
+func (a *AuthUseCase) SignUp(User models.User) (string, error) {
 	if User.Username == "" || User.Password == "" {
-		return errors.New("bad")
+		return "", errors.New("bad")
 	}
 	pswd := sha256.New()
 	pswd.Write([]byte(User.Password))
@@ -72,11 +72,20 @@ func (a *AuthUseCase) SignUp(User models.User) error {
 		Password:  fmt.Sprintf("%x", pswd.Sum(nil)),
 	}
 
-	if err := a.repo.CreateUser(DBuser); err != nil {
-		return err
+	uuid, err := a.repo.CreateUser(DBuser)
+	if err != nil {
+		return "", err
 	}
 
-	return nil
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &Claims{
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: jwt.At(time.Now().Add(a.expireDuration)),
+			IssuedAt:  jwt.At(time.Now()),
+		},
+		UUID: uuid,
+	})
+
+	return token.SignedString(a.signingKey)
 }
 
 func (a *AuthUseCase) SignIn(User models.User) (string, error) {
