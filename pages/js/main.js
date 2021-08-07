@@ -55,6 +55,10 @@ const formHandler = (formName) => {
             let sending = new Promise(function (resolve,reject) {
                 getFormData(formName);
                 const req = new XMLHttpRequest();
+
+
+                // замени тут ниже url на нужный !!!
+
                 req.open("POST","/example/text.txt",false);
                 console.log("start data sending")
                 req.send(dataToSend);
