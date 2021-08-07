@@ -3,14 +3,16 @@ package models
 import "time"
 
 type User struct {
-	uuid     string
-	UserName string `json:"UserName"`
-	Password string `json:"Password"`
+	uuid      string
+	Firstname string `json:"Firstname,omitempty"`
+	Lastname  string `json:"Lastname,omitempty"`
+	Username  string `json:"Username"`
+	Password  string `json:"Password"`
 }
 
-type message struct {
-	Body      string
-	Direction User
-	Sender    User
-	Sent      time.Time
+type Message struct {
+	Body      string    `json:""`
+	Direction User      `json:""`
+	Sender    User      `json:""`
+	Sent      time.Time `json:""`
 }

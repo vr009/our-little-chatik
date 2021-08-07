@@ -21,7 +21,13 @@ func NewPGRepo() *PGRepo {
 }
 
 func (repo *PGRepo) StartInit() error {
-	create_query := "create table Users (user_id uuid default uuid_generate_v4(), username varchar(50) primary key not null, password varchar(30));"
+	create_query :=
+		"create table Users (user_id uuid default uuid_generate_v4()," +
+			" username varchar(50) primary key not null," +
+			" password varchar(150)," +
+			" firstname varchar(50)," +
+			" lastname varchar(50));"
+
 	if repo.service != nil {
 		if _, err := repo.service.Exec(create_query); err != nil {
 			return err
@@ -47,7 +53,10 @@ func (repo *PGRepo) CreateUser(user models.User) error {
 	if repo.service != nil {
 		uuidWithHyphen := uuid.New()
 		uuid := strings.Replace(uuidWithHyphen.String(), "-", "", -1)
-		str := fmt.Sprintf("insert into %s values ( '%s' ,'%s', '%s');", repo.Table_name, uuid, user.UserName, user.Password)
+
+		str := fmt.Sprintf("insert into %s values ( '%s' ,'%s', '%s','%s', '%s');",
+			repo.Table_name, uuid, user.Username, user.Password, user.Firstname, user.Lastname)
+
 		if _, err := repo.service.Exec(str); err != nil {
 			return err
 		}
@@ -59,7 +68,7 @@ func (repo *PGRepo) GetUser(user models.User) (string, string, error) {
 
 	if repo.service != nil {
 		var pswd string
-		str := fmt.Sprintf("select password from %s where username='%s';", repo.Table_name, user.UserName)
+		str := fmt.Sprintf("select password from %s where username='%s';", repo.Table_name, user.Username)
 		res := repo.service.QueryRow(str)
 		err := res.Scan(&pswd)
 		if err != nil {
@@ -67,7 +76,7 @@ func (repo *PGRepo) GetUser(user models.User) (string, string, error) {
 		}
 
 		var uuid string
-		str2 := fmt.Sprintf("select user_id from %s where username='%s';", repo.Table_name, user.UserName)
+		str2 := fmt.Sprintf("select user_id from %s where username='%s';", repo.Table_name, user.Username)
 		res2 := repo.service.QueryRow(str2)
 		err2 := res2.Scan(&uuid)
 		if err2 != nil {

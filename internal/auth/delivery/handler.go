@@ -35,7 +35,7 @@ func MiddleWare(w http.ResponseWriter, r *http.Request) models.User {
 
 	defer r.Body.Close()
 
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil || user.UserName == "" || user.Password == "" {
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil || user.Username == "" || user.Password == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Print(err)
 	}
@@ -47,14 +47,14 @@ func (a *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 
 	user := MiddleWare(w, r)
 
-	if err := a.UseCase.SignUp(user.UserName, user.Password); err != nil {
+	if err := a.UseCase.SignUp(user); err != nil {
 		w.WriteHeader(http.StatusForbidden)
 		log.Print(err)
 	} else {
 		//w.Header().Set("Set-Cookie",fmt.Sprintf("ssid=%s; path=/; HttpOnly",mytoken))
 		http.Redirect(w, r, "/auth/signin", http.StatusSeeOther)
 	}
-	log.Print(user.UserName)
+	log.Print(user.Username)
 
 }
 
@@ -62,7 +62,7 @@ func (a *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 
 	user := MiddleWare(w, r)
 
-	if mytoken, err := a.UseCase.SignIn(user.UserName, user.Password); err != nil {
+	if mytoken, err := a.UseCase.SignIn(user); err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		log.Print(err)
 	} else {

@@ -57,40 +57,42 @@ func ParseToken(AccesToken string, SigningKey []byte) (string, error) {
 	return "", nil
 }
 
-func (a *AuthUseCase) SignUp(username, password string) error {
-	if username == "" || password == "" {
+func (a *AuthUseCase) SignUp(User models.User) error {
+	if User.Username == "" || User.Password == "" {
 		return errors.New("bad")
 	}
 	pswd := sha256.New()
-	pswd.Write([]byte(password))
+	pswd.Write([]byte(User.Password))
 	pswd.Write([]byte(a.hashSalt))
 
-	user := models.User{
-		UserName: username,
-		Password: fmt.Sprintf("%x", pswd.Sum(nil)),
+	DBuser := models.User{
+		Firstname: User.Firstname,
+		Lastname:  User.Lastname,
+		Username:  User.Username,
+		Password:  fmt.Sprintf("%x", pswd.Sum(nil)),
 	}
 
-	if err := a.repo.CreateUser(user); err != nil {
+	if err := a.repo.CreateUser(DBuser); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (a *AuthUseCase) SignIn(username, password string) (string, error) {
+func (a *AuthUseCase) SignIn(User models.User) (string, error) {
 
-	if username == "" || password == "" {
+	if User.Username == "" || User.Password == "" {
 		return "", errors.New("bad")
 	}
 
 	pswd := sha256.New()
-	pswd.Write([]byte(password))
+	pswd.Write([]byte(User.Password))
 	pswd.Write([]byte(a.hashSalt))
 
 	compStr := fmt.Sprintf("%x", pswd.Sum(nil))
 
 	user := models.User{
-		UserName: username,
+		Username: User.Username,
 		Password: fmt.Sprintf("%x", pswd.Sum(nil)),
 	}
 
