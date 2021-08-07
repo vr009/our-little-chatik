@@ -34,7 +34,7 @@ const sayError = () => {
 
 function validateLoginForm ( ) {
         valid = true;
-            if (( document.authentication.user_login.value == "" ) || ( document.authentication.user_password.value == "" ))
+            if (( document.authentication.Username.value == "" ) || ( document.authentication.Password.value == "" ))
             {       $('.user_login').addClass('form_alert');
                     $('.user_password').addClass('form_alert');
                     // $('.user_login').css('border-color','red');
