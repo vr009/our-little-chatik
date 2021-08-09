@@ -11,6 +11,6 @@ type ChatRepo interface {
 
 type ChatUseCase interface {
 	SaveMessage(mes models.Message) error
-	FetchChat(chat models.Chat) error
-	ChatList(userId string) error
+	FetchChat(chat models.Chat) ([]models.Message, error)
+	ChatList(userId string) ([]models.Chat, error)
 }
