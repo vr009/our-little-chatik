@@ -13,12 +13,20 @@ func NewChatUseCase(rep chat.ChatRepo) *ChatUseCase {
 	return &ChatUseCase{repo: rep}
 }
 
-func SaveMessage(mes models.Message) error {
-	return nil
+func (ch *ChatUseCase) SaveMessage(mes models.Message) error {
+	if ch.repo.ChatExist(mes.Sender + mes.Direction) {
+		return ch.repo.AddMessage(mes)
+	}
+	err := ch.repo.CreateChat(mes)
+	if err != nil {
+		return err
+	}
+
+	return ch.repo.AddMessage(mes)
 }
-func FetchChat(chat models.Chat) ([]models.Message, error) {
-	return []models.Message{}, nil
+func (ch *ChatUseCase) FetchChat(chat models.Chat) ([]models.Message, error) {
+	return ch.repo.GetChat(chat)
 }
-func ChatList(userId string) ([]models.Chat, error) {
-	return []models.Chat{}, nil
+func (ch *ChatUseCase) ChatList(userId string) ([]models.Chat, error) {
+	return ch.repo.GetChatList(userId)
 }
