@@ -13,3 +13,9 @@ type ChatList struct {
 	Owner string `json:"owner"`
 	List  []Chat `json:"list"`
 }
+
+type Conversation struct {
+	ConversationId string `json:"conversation_id"`
+	Owner          string `json:"owner"`
+	MessageList    []Message
+}
