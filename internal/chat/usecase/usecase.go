@@ -14,14 +14,6 @@ func NewChatUseCase(rep chat.ChatRepo) *ChatUseCase {
 }
 
 func (ch *ChatUseCase) SaveMessage(mes models.Message) error {
-	if ch.repo.ChatExist(mes.Sender + mes.Direction) {
-		return ch.repo.AddMessage(mes)
-	}
-	err := ch.repo.CreateChat(mes)
-	if err != nil {
-		return err
-	}
-
 	return ch.repo.AddMessage(mes)
 }
 func (ch *ChatUseCase) FetchChat(chat models.Chat) ([]models.Message, error) {

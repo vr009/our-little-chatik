@@ -4,9 +4,7 @@ import "our-little-chatik/internal/models"
 
 type ChatRepo interface {
 	AddMessage(mes models.Message) error
-	ChatExist(chatId string) bool
 	GetChat(chat models.Chat) ([]models.Message, error)
-	CreateChat(mes models.Message) error
 	GetChatList(userId string) ([]models.Chat, error)
 }
 
