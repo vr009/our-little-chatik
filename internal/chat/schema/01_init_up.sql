@@ -11,6 +11,7 @@ create table Messages(
     chat_id integer,
     time timestamp,
     body varchar(300),
+    sender uuid not null,
     foreign key (chat_id) references Chats (chat_id)
 );
 
