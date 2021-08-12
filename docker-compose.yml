@@ -44,7 +44,7 @@ services:
   nginx:
     build: "./internal/nginx"
     ports:
-    - "80:80"
+    - 80:80
     depends_on:
       - auth
       - chats
