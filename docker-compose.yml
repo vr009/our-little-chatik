@@ -40,3 +40,11 @@ services:
       - POSTGRES_PASSQORD=admin
     ports:
       - 5433:5432
+
+  nginx:
+    build: "./internal/nginx"
+    ports:
+    - "80:80"
+    depends_on:
+      - auth
+      - chats
