@@ -19,7 +19,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/fetch/chatlist", handler.GetChatList)
-	r.HandleFunc("/fetch/conv", handler.GetChat)
+	r.HandleFunc("/fetch/conv", handler.GetChat).Methods("GET")
 	r.HandleFunc("/put/message", handler.PostMessage)
 
 	srv := &http.Server{Handler: r, Addr: "8080"}

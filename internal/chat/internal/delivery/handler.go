@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 type ChatHandler struct {
@@ -36,18 +37,18 @@ func (c *ChatHandler) PostMessage(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+//TODO распарсить куку авторизации и добавить параметр get chat_id
 func (c *ChatHandler) GetChat(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
 
 	chat := models.Chat{}
-	err := json.NewDecoder(r.Body).Decode(&chat)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+	chat_id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err == nil {
+		http.NotFound(w, r)
+		return
 	}
 
 	Conv := models.Conversation{
-		ConversationId: chat.ConversationId,
-		Owner:          chat.Owner,
+		ConversationId: chat_id,
 	}
 
 	if Conv.MessageList, err = c.Usecase.FetchChat(chat); err != nil {
@@ -68,9 +69,7 @@ func (c *ChatHandler) GetChat(w http.ResponseWriter, r *http.Request) {
 func (c *ChatHandler) GetChatList(w http.ResponseWriter, r *http.Request) {
 
 	var uuid string
-	if err := json.NewDecoder(r.Body).Decode(&uuid); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-	}
+	uuid = r.Header.Get("Unparsed") //TODO придумать как аккуратно передавать пользователя которому нужен запрос
 
 	List, err := c.Usecase.ChatList(uuid)
 	if err != nil {
