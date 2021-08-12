@@ -15,7 +15,7 @@ services:
       ./internal/chat/.
     command: ./chat-service
     ports:
-      -8080:8080
+      - 8000:8000
     depends_on:
       - db-chats
 
@@ -39,7 +39,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSQORD=admin
     ports:
-      - 5433:5432
+      - 5432:5432
 
   nginx:
     build: "./internal/nginx"

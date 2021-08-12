@@ -23,7 +23,7 @@ func main() {
 	r.HandleFunc("/chat/conv", handler.GetChat).Methods("GET")
 	r.HandleFunc("/chat/put/message", handler.PostMessage)
 
-	srv := &http.Server{Handler: r, Addr: "8080"}
+	srv := &http.Server{Handler: r, Addr: "8000"}
 
 	log.Fatal(srv.ListenAndServe())
 
