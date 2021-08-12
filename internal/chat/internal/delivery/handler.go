@@ -1,11 +1,11 @@
 package delivery
 
 import (
+	"chat"
+	"chat/internal/models"
 	"encoding/json"
 	"log"
 	"net/http"
-	"our-little-chatik/internal/chat"
-	"our-little-chatik/internal/models"
 )
 
 type ChatHandler struct {

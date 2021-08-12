@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  auth:
+    build:
+      ./internal/auth/.
+    command: ./auth-service
+    ports:
+      - 8080:8080
+    depends_on:
+      - db-auth
+
+  chats:
+    build:
+      ./internal/chat/.
+    command: ./chat-service
+    ports:
+      -8080:8080
+    depends_on:
+      - db-chats
+
+  db-auth:
+    restart: always
+    image: postgres:latest
+    volumes:
+    - ./create-auth-db.sql:/docker-entrypoint-initdb.d/create-db.sql
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSQORD=admin
+    ports:
+    - 5433:5432
+
+  db-chats:
+    restart: always
+    image: postgres:latest
+    volumes:
+      - ./create-auth-db.sql:/docker-entrypoint-initdb.d/create-db.sql
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSQORD=admin
+    ports:
+      - 5433:5432

@@ -1,11 +1,11 @@
 package repo
 
 import (
+	models2 "chat/internal/models"
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"log"
-	"our-little-chatik/internal/models"
 	"time"
 )
 
@@ -21,7 +21,7 @@ func NewDataBase(ct mongo.Collection, db mongo.Database) *DataBase {
 	}
 }
 
-func (db *DataBase) AddMessage(mes models.Message) error {
+func (db *DataBase) AddMessage(mes models2.Message) error {
 	chatId := mes.Sender + mes.Direction
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -30,7 +30,7 @@ func (db *DataBase) AddMessage(mes models.Message) error {
 	return err
 }
 
-func (db *DataBase) GetChat(chat models.Chat) ([]models.Message, error) {
+func (db *DataBase) GetChat(chat models2.Chat) ([]models2.Message, error) {
 
 	//out := []models.Message{}
 
@@ -58,6 +58,6 @@ func (db *DataBase) GetChat(chat models.Chat) ([]models.Message, error) {
 	return nil, nil
 }
 
-func (db *DataBase) GetChatList(userId string) ([]models.Chat, error) {
+func (db *DataBase) GetChatList(userId string) ([]models2.Chat, error) {
 	return nil, nil
 }
