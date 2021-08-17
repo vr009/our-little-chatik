@@ -28,7 +28,7 @@ func main() {
 		writer.WriteHeader(http.StatusOK)
 		writer.Write([]byte("Got it"))
 	}).Methods("GET")
-	s.Use(usecase.AuthMiddleWare)
+//	s.Use(usecase.AuthMiddleWare)
 
 	srv := &http.Server{
 		Handler: r,
