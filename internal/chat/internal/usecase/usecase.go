@@ -1,15 +1,15 @@
 package usecase
 
 import (
-	"chat"
+	"chat/internal"
 	models2 "chat/internal/models"
 )
 
 type ChatUseCase struct {
-	repo chat.ChatRepo
+	repo internal.ChatRepo
 }
 
-func NewChatUseCase(rep chat.ChatRepo) *ChatUseCase {
+func NewChatUseCase(rep internal.ChatRepo) *ChatUseCase {
 	return &ChatUseCase{repo: rep}
 }
 

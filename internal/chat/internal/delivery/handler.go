@@ -1,7 +1,7 @@
 package delivery
 
 import (
-	"chat"
+	"chat/internal"
 	"chat/internal/models"
 	"encoding/json"
 	"log"
@@ -10,10 +10,10 @@ import (
 )
 
 type ChatHandler struct {
-	Usecase chat.ChatUseCase
+	Usecase internal.ChatUseCase
 }
 
-func NewChatHandler(usecase chat.ChatUseCase) *ChatHandler {
+func NewChatHandler(usecase internal.ChatUseCase) *ChatHandler {
 	return &ChatHandler{
 		Usecase: usecase,
 	}
