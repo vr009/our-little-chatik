@@ -1,2 +1,2 @@
 docker-compose build
-docker-composeup -d
+docker-compose up -d
