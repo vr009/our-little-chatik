@@ -24,11 +24,11 @@ func main() {
 	r.HandleFunc("/auth/signin", handler.SignIn).Methods("POST")
 
 	s := r.PathPrefix("").Subrouter()
-	s.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
+	s.HandleFunc("/auth", func(writer http.ResponseWriter, request *http.Request) {
 		writer.WriteHeader(http.StatusOK)
 		writer.Write([]byte("Got it"))
 	}).Methods("GET")
-//	s.Use(usecase.AuthMiddleWare)
+	s.Use(usecase.AuthMiddleWare)
 
 	srv := &http.Server{
 		Handler: r,

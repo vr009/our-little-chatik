@@ -37,12 +37,12 @@ func (repo *PGRepo) StartInit() error {
 }
 
 func (repo *PGRepo) InitDB() error {
-	connStr := "user=postgres password=admin dbname=auth sslmode=disable"
-
+	connStr := "host=db-auth port=5432 user=postgres password=admin dbname=auth sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return err
 	}
+	
 
 	repo.service = db
 

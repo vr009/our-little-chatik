@@ -14,9 +14,10 @@ services:
     image: postgres:latest
     volumes:
     - ./create-auth-db.sql:/docker-entrypoint-initdb.d/create-db.sql
+    - ./internal/auth/schema/01_init_up.sql:/docker-entrypoint-initdb.d/init-db.sql
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSQORD=admin
+      - POSTGRES_PASSWORD=admin
     ports:
     - 5433:5432
 
@@ -25,19 +26,20 @@ services:
     image: postgres:latest
     volumes:
       - ./create-auth-db.sql:/docker-entrypoint-initdb.d/create-db.sql
+      - ./internal/chat/schema/01_init_up.sql:/docker-entrypoint-initdb.d/init-db.sql
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSQORD=admin
+      - POSTGRES_PASSWORD=admin
     ports:
       - 5432:5432
 
   nginx:
-    build: "./internal/nginx"
+    build: ./internal/nginx/.
     ports:
-    - 80:80
-    depends_on:
-      - auth
+      - 80:80
+    links:
       - chats
+      - auth
 
   chats:
     build: ./internal/chat/.
