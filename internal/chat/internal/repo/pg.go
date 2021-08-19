@@ -17,14 +17,14 @@ type PGRepo struct {
 }
 
 func NewPGRepo() *PGRepo {
-	return &PGRepo{Db_name: "postgres",
+	return &PGRepo{Db_name: "chats",
 		Chats_table_name:    "Chats",
 		Messages_table_name: "Messages",
 	}
 }
 
 func (repo *PGRepo) InitDB() error {
-	connStr := "user=postgres password=admin dbname=chats sslmode=disable"
+	connStr := "host=db-chats port=5432 user=postgres password=admin dbname=chats sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return err
