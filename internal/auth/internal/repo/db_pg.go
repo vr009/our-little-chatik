@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	_ "github.com/lib/pq"
+	"log"
 	"strings"
 )
 
@@ -42,7 +43,6 @@ func (repo *PGRepo) InitDB() error {
 	if err != nil {
 		return err
 	}
-	
 
 	repo.service = db
 
@@ -65,7 +65,6 @@ func (repo *PGRepo) CreateUser(user models2.User) (string, error) {
 }
 
 func (repo *PGRepo) GetUser(user models2.User) (string, string, error) {
-
 	if repo.service != nil {
 		var pswd string
 		str := fmt.Sprintf("select password from %s where username='%s';", repo.Table_name, user.Username)
@@ -86,6 +85,33 @@ func (repo *PGRepo) GetUser(user models2.User) (string, string, error) {
 		return uuid, pswd, nil
 	}
 	return "", "", errors.New("No connection")
+}
+
+func (repo *PGRepo) GetAllUser() ([]models2.User, error) {
+	if repo.service != nil {
+		FetchString := fmt.Sprintf("select user_id, username user_id from users;")
+		UsersList := make([]models2.User, 0, 10)
+
+		res, err := repo.service.Query(FetchString)
+		if err != nil {
+			log.Print(err)
+			return nil, err
+		}
+
+		defer res.Close()
+
+		for res.Next() {
+			UserItem := models2.User{}
+			err := res.Scan(&UserItem.Uuid, &UserItem.Username)
+			if err != nil {
+				log.Print(err)
+			}
+			UsersList = append(UsersList, UserItem)
+		}
+
+		return UsersList, nil
+	}
+	return []models2.User{}, errors.New("No connection")
 }
 
 func (repo *PGRepo) Close() {

@@ -140,3 +140,7 @@ func (a *AuthUseCase) AuthMiddleWare(next http.Handler) http.Handler {
 		}
 	})
 }
+
+func (a *AuthUseCase) FetchUsers() ([]models2.User, error) {
+	return a.repo.GetAllUser()
+}

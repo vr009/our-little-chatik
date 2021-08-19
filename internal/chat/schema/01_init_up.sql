@@ -1,3 +1,4 @@
+create database chats;
 create table Chats(
     chat_id serial,
     from_id uuid not null,
@@ -5,7 +6,6 @@ create table Chats(
     unique (chat_id),
     PRIMARY KEY(from_id, to_id)
 );
-
 create table Messages(
     Message_id serial primary key ,
     chat_id integer,

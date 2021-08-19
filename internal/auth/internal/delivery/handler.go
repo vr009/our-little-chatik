@@ -27,6 +27,8 @@ func MiddleWare(w http.ResponseWriter, r *http.Request) models2.User {
 	var user models2.User
 	body := make([]byte, 0, 25)
 
+	log.Print(r.RequestURI)
+
 	if _, err := r.Body.Read(body); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Print(err)
@@ -70,4 +72,24 @@ func (a *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Set-Cookie", fmt.Sprintf("ssid=%s; path=/; HttpOnly", token))
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
+}
+
+func (a *AuthHandler) GetUsersList(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+
+	List, err := a.UseCase.FetchUsers()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+
+	resp, err := json.Marshal(List)
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+
+	w.Write(resp)
+	w.WriteHeader(http.StatusOK)
+
 }

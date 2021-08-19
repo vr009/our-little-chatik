@@ -1,3 +1,4 @@
+create database auth;
 create table Users (
     user_id uuid not null,
     username varchar(50) primary key not null,

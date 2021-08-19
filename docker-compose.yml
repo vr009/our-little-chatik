@@ -11,10 +11,7 @@ services:
 
   db-auth:
     restart: always
-    image: postgres:latest
-    volumes:
-    - ./create-auth-db.sql:/docker-entrypoint-initdb.d/create-db.sql
-    - ./internal/auth/schema/01_init_up.sql:/docker-entrypoint-initdb.d/init-db.sql
+    build: ./internal/auth/schema
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=admin
@@ -23,10 +20,7 @@ services:
 
   db-chats:
     restart: always
-    image: postgres:latest
-    volumes:
-      - ./create-auth-db.sql:/docker-entrypoint-initdb.d/create-db.sql
-      - ./internal/chat/schema/01_init_up.sql:/docker-entrypoint-initdb.d/init-db.sql
+    build: ./internal/chat/schema
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=admin

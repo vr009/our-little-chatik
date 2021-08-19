@@ -14,4 +14,5 @@ RUN go mod tidy
 
 RUN go build -o chat-service ./cmd/main.go
 
+
 CMD ["./chat-service"]
