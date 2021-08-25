@@ -31,7 +31,7 @@
 				<p id="wlcmsg"> Welcome, new man! </p>
 				<p class="wlcmsg_description" > Please, enter your account. Or <a href="signup.html"> Sign up</a> </p>
 			<div id="login_form">
-				<form name="authentication" method="post">
+				<form name="login_form" method="post">
 					<ul style="padding:0; list-style-type: none">
 						<li>
 							<label for="login">Login:</label>
@@ -43,12 +43,12 @@
 						</li>
 					</ul>
 				</form>
-				<button onclick="formHandler('authentication')" id="button_login" class="button"> Log in </button>
+				<button onclick="formHandler('login_form')" id="button_login" class="button"> Log in </button>
 			</div>
 		</div>
 	</div>
 <script type="text/javascript">
-	welcomeUser("Kostik","wlcmsg")
+	// welcomeUser("Kostik","wlcmsg");
 </script>
 </body>
 </html>

@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="css/style.css">
     <title> Sign up </title>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-    <script type="text/javascript" src="/js/main.js"></script>
+    <script type="text/javascript" src="./js/main.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -30,7 +30,7 @@
             <p id="wlcmsg"> Welcome, new man! </p>
             <p class="wlcmsg_description" > Please, create your new account. Or <a href="index.html"> Log in</a> </p>
             <div id="login_form">
-                <form name="signing_up" method="post">
+                <form name="signup_form" method="post">
                     <ul style="padding:0; list-style-type: none">
                         <li>
                             <label for="login">Your first name:</label>
@@ -38,7 +38,7 @@
                         </li>
                         <li>
                             <label for="login">Your last name:</label>
-                            <input class="user_firstName" type="text" id="lastName" name="Lastname">
+                            <input class="user_lastName" type="text" id="lastName" name="Lastname">
                         </li>
                         <li>
                             <label for="login">Login:</label>
@@ -50,7 +50,7 @@
                         </li>
                     </ul>
                 </form>
-                <button onclick="formHandler('signing_up')" id="button_login" class="button"> Sign up! </button>
+                <button onclick="formHandler('signup_form')" id="button_login" class="button"> Sign up! </button>
             </div>
         </div>
     </div>
