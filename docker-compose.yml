@@ -1,0 +1,44 @@
+version: '2.0'
+
+services:
+  auth:
+    build:  ./internal/auth/.
+    command: ./auth-service
+    ports:
+      - 8080:8080
+    depends_on:
+      - db-auth
+
+  db-auth:
+    restart: always
+    build: ./internal/auth/schema
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+    ports:
+    - 5433:5432
+
+  db-chats:
+    restart: always
+    build: ./internal/chat/schema
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+    ports:
+      - 5432:5432
+
+  nginx:
+    build: ./internal/nginx/.
+    ports:
+      - 80:80
+    links:
+      - chats
+      - auth
+
+  chats:
+    build: ./internal/chat/.
+    command: ./chat-service
+    ports:
+    - 8000:8000
+    depends_on:
+      - db-chats
