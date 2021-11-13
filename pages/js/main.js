@@ -1,6 +1,5 @@
 // Скрип отправки данных из формы к славику
 
-
 const getLoginFormData = () => {
     const loginData = {};
     let formName = "login_form";
