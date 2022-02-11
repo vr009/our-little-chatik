@@ -44,7 +44,7 @@ func (repo *PGRepo) GetUser(user *models2.User) (*models2.User, models2.ErrorCod
 	qs := "select username, password, firstname, lastname from users where username=$1 and password=$2"
 	row := repo.service.QueryRow(context.Background(), qs, user.Username, user.Password)
 	log.Println("ok", 1)
-	err := row.Scan(userDB.Username, userDB.Password, userDB.Firstname, userDB.Lastname)
+	err := row.Scan(&userDB.Username, &userDB.Password, &userDB.Firstname, &userDB.Lastname)
 	log.Println("ok", 2)
 	if err != nil {
 		log.Println(err)
