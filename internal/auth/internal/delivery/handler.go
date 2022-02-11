@@ -19,7 +19,6 @@ func NewAuthHandler(UCase internal.UseCase) *AuthHandler {
 }
 
 func (a *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
-
 	user := models2.User{}
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
