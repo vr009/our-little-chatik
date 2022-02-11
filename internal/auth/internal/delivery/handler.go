@@ -4,7 +4,6 @@ import (
 	"auth/internal"
 	models2 "auth/internal/models"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 )
@@ -19,77 +18,56 @@ func NewAuthHandler(UCase internal.UseCase) *AuthHandler {
 	}
 }
 
-func MiddleWare(w http.ResponseWriter, r *http.Request) models2.User {
-	// temporary thing
-	w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
-	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-
-	var user models2.User
-	body := make([]byte, 0, 25)
-
-	log.Print(r.RequestURI)
-
-	if _, err := r.Body.Read(body); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		log.Print(err)
-	}
-
-	defer r.Body.Close()
-
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil || user.Username == "" || user.Password == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		log.Print(err)
-	}
-
-	return user
-}
-
 func (a *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 
-	user := MiddleWare(w, r)
-
-	token, err := a.UseCase.SignUp(user)
-
+	user := models2.User{}
+	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		w.WriteHeader(http.StatusForbidden)
-		log.Print(err)
-	} else {
-		w.Header().Set("Set-Cookie", fmt.Sprintf("ssid=%s; path=/; HttpOnly", token))
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		response(w, models2.INTERNAL, nil)
+		return
 	}
-	log.Print(user.Username)
-
+	authedUsr, errCode := a.UseCase.SignUp(&user)
+	body, err := json.Marshal(authedUsr)
+	if err != nil {
+		response(w, models2.INTERNAL, nil)
+		return
+	}
+	response(w, errCode, body)
 }
 
 func (a *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
-
-	user := MiddleWare(w, r)
-
-	if token, err := a.UseCase.SignIn(user); err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		log.Print(err)
-	} else {
-		w.Header().Set("Set-Cookie", fmt.Sprintf("ssid=%s; path=/; HttpOnly", token))
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+	user := models2.User{}
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		response(w, models2.INTERNAL, nil)
+		return
 	}
+	log.Println(user)
+	authedUsr, errCode := a.UseCase.SignIn(&user)
+
+	body, err := json.Marshal(authedUsr)
+	if err != nil {
+		response(w, models2.INTERNAL, nil)
+		return
+	}
+	response(w, errCode, body)
 }
 
-func (a *AuthHandler) GetUsersList(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
-	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-
-	List, err := a.UseCase.FetchUsers()
-	if err != nil {
+func response(w http.ResponseWriter, errCode models2.ErrorCode, body []byte) {
+	switch errCode {
+	case models2.OK:
+		w.WriteHeader(http.StatusOK)
+	case models2.EXISTS:
+		w.WriteHeader(http.StatusConflict)
+	case models2.NOT_FOUND:
+		w.WriteHeader(http.StatusNotFound)
+	case models2.CREATED:
+		w.WriteHeader(http.StatusCreated)
+	case models2.INTERNAL:
 		w.WriteHeader(http.StatusInternalServerError)
+	default:
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
-
-	resp, err := json.Marshal(List)
-	if err != nil {
-		log.Print(err)
-		w.WriteHeader(http.StatusInternalServerError)
-	}
-
-	w.Write(resp)
-	w.WriteHeader(http.StatusOK)
-
+	w.Write(body)
 }

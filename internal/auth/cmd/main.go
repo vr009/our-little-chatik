@@ -4,32 +4,34 @@ import (
 	delivery2 "auth/internal/delivery"
 	repo2 "auth/internal/repo"
 	usecase2 "auth/internal/usecase"
+	"auth/utils"
+	"context"
 	"github.com/gorilla/mux"
+	"github.com/jackc/pgx/v4/pgxpool"
 	"log"
 	"net/http"
-	"time"
 )
 
 func main() {
-	//	repom := repo.NewmockRepo()
-	repom := repo2.NewPGRepo()
-	repom.InitDB()
-	defer repom.Close()
-
-	usecase := usecase2.NewAuthUseCase(repom, "brr", []byte("brr"), time.Duration(150000000000))
+	connstr, err := utils.ConnStr()
+	if err != nil {
+		panic(err)
+	}
+	log.Println(connstr)
+	conn, err := pgxpool.Connect(context.Background(), connstr)
+	if err != nil {
+		panic(err)
+	}
+	repom := repo2.NewPGRepo(conn)
+	usecase := usecase2.NewAuthUseCase(repom)
 	handler := delivery2.NewAuthHandler(usecase)
 
 	r := mux.NewRouter()
-	r.HandleFunc("/auth/signup", handler.SignUp).Methods("POST")
-	r.HandleFunc("/auth/signin", handler.SignIn).Methods("POST")
-
-	s := r.PathPrefix("").Subrouter()
-	s.HandleFunc("/auth", func(writer http.ResponseWriter, request *http.Request) {
-		writer.WriteHeader(http.StatusOK)
-		writer.Write([]byte("Got it"))
-	}).Methods("GET")
-	s.HandleFunc("/fetch", handler.GetUsersList).Methods("GET")
-	s.Use(usecase.AuthMiddleWare)
+	s := r.PathPrefix("/api/v1").Subrouter()
+	{
+		s.HandleFunc("/auth/signup", handler.SignUp).Methods("POST")
+		s.HandleFunc("/auth/signin", handler.SignIn).Methods("POST")
+	}
 
 	srv := &http.Server{
 		Handler: r,

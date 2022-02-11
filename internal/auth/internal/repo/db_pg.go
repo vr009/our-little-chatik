@@ -2,118 +2,53 @@ package repo
 
 import (
 	models2 "auth/internal/models"
-	"database/sql"
-	"errors"
-	"fmt"
+	"context"
 	"github.com/google/uuid"
-	_ "github.com/lib/pq"
+	"github.com/jackc/pgx/v4/pgxpool"
 	"log"
 	"strings"
 )
 
 type PGRepo struct {
-	service    *sql.DB
-	Db_name    string
-	Table_name string
+	service *pgxpool.Pool
 }
 
-func NewPGRepo() *PGRepo {
-	return &PGRepo{Db_name: "auth", Table_name: "Users"}
-}
-
-func (repo *PGRepo) StartInit() error {
-	create_query :=
-		"create table Users (user_id uuid default uuid_generate_v4()," +
-			" username varchar(50) primary key not null," +
-			" password varchar(150)," +
-			" firstname varchar(50)," +
-			" lastname varchar(50));"
-
-	if repo.service != nil {
-		if _, err := repo.service.Exec(create_query); err != nil {
-			return err
-		}
+func NewPGRepo(service *pgxpool.Pool) *PGRepo {
+	return &PGRepo{
+		service: service,
 	}
-	return nil
 }
 
-func (repo *PGRepo) InitDB() error {
-	connStr := "host=db-auth port=5432 user=postgres password=admin dbname=auth sslmode=disable"
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		return err
-	}
-
-	repo.service = db
-
-	return nil
-}
-
-func (repo *PGRepo) CreateUser(user models2.User) (string, error) {
+func (repo *PGRepo) CreateUser(user *models2.User) models2.ErrorCode {
 	if repo.service != nil {
 		uuidWithHyphen := uuid.New()
-		uuid := strings.Replace(uuidWithHyphen.String(), "-", "", -1)
+		uuidstr := strings.Replace(uuidWithHyphen.String(), "-", "", -1)
+		log.Println("new")
+		str := "insert into users values ($1 ,$2, $3, $4, $5)"
 
-		str := fmt.Sprintf("insert into %s values ( '%s' ,'%s', '%s','%s', '%s');",
-			repo.Table_name, uuid, user.Username, user.Password, user.Firstname, user.Lastname)
-
-		if _, err := repo.service.Exec(str); err != nil {
-			return uuid, err
+		if _, err := repo.service.Exec(context.Background(),
+			str, uuidstr, user.Username, user.Password, user.Firstname, user.Lastname); err != nil {
+			log.Println(err)
+			return models2.EXISTS
 		}
 	}
-	return "", nil
+	return models2.OK
 }
 
-func (repo *PGRepo) GetUser(user models2.User) (string, string, error) {
-	if repo.service != nil {
-		var pswd string
-		str := fmt.Sprintf("select password from %s where username='%s';", repo.Table_name, user.Username)
-		res := repo.service.QueryRow(str)
-		err := res.Scan(&pswd)
-		if err != nil {
-			return "", "", err
-		}
-
-		var uuid string
-		str2 := fmt.Sprintf("select user_id from %s where username='%s';", repo.Table_name, user.Username)
-		res2 := repo.service.QueryRow(str2)
-		err2 := res2.Scan(&uuid)
-		if err2 != nil {
-			return "", "", err
-		}
-
-		return uuid, pswd, nil
+func (repo *PGRepo) GetUser(user *models2.User) (*models2.User, models2.ErrorCode) {
+	userDB := &models2.User{}
+	log.Println("ok", 0)
+	log.Println(repo.service)
+	log.Println(user.Username)
+	log.Println(user.Password)
+	qs := "select username, password, firstname, lastname from users where username=$1 and password=$2"
+	row := repo.service.QueryRow(context.Background(), qs, user.Username, user.Password)
+	log.Println("ok", 1)
+	err := row.Scan(userDB.Username, userDB.Password, userDB.Firstname, userDB.Lastname)
+	log.Println("ok", 2)
+	if err != nil {
+		log.Println(err)
+		return nil, models2.NOT_FOUND
 	}
-	return "", "", errors.New("No connection")
-}
-
-func (repo *PGRepo) GetAllUser() ([]models2.User, error) {
-	if repo.service != nil {
-		FetchString := fmt.Sprintf("select user_id, username user_id from users;")
-		UsersList := make([]models2.User, 0, 10)
-
-		res, err := repo.service.Query(FetchString)
-		if err != nil {
-			log.Print(err)
-			return nil, err
-		}
-
-		defer res.Close()
-
-		for res.Next() {
-			UserItem := models2.User{}
-			err := res.Scan(&UserItem.Uuid, &UserItem.Username)
-			if err != nil {
-				log.Print(err)
-			}
-			UsersList = append(UsersList, UserItem)
-		}
-
-		return UsersList, nil
-	}
-	return []models2.User{}, errors.New("No connection")
-}
-
-func (repo *PGRepo) Close() {
-	repo.service.Close()
+	return userDB, models2.OK
 }

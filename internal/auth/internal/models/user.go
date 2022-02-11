@@ -1,9 +1,9 @@
 package models
 
 type User struct {
-	Uuid      string `json:"-"`
-	Firstname string `json:"Firstname,omitempty"`
-	Lastname  string `json:"Lastname,omitempty"`
-	Username  string `json:"Username"`
-	Password  string `json:"Password"`
+	Uuid      string `json:"id,omitempty"`
+	Firstname string `json:"firstname,omitempty"`
+	Lastname  string `json:"lastname,omitempty"`
+	Username  string `json:"username"`
+	Password  string `json:"password"`
 }
