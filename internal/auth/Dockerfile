@@ -2,6 +2,8 @@ FROM golang:latest
 
 RUN go version
 
+ENV GO111MODULE=on
+
 ENV GOPATH=/
 
 COPY ./ ./

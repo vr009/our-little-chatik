@@ -18,7 +18,7 @@ func ConnStr() (string, error) {
 	}
 	host := os.Getenv("DB_HOST")
 	if host == "" {
-		host = "127.0.0.1"
+		host = "db-auth"
 	}
 	password := os.Getenv("DB_PSWD")
 	if password == "" {
