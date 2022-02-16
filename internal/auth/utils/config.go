@@ -14,7 +14,7 @@ func ConnStr() (string, error) {
 
 	port := os.Getenv("DB_PORT")
 	if port == "" {
-		port = "5433"
+		port = "5432"
 	}
 	host := os.Getenv("DB_HOST")
 	if host == "" {
