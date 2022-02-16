@@ -19,11 +19,4 @@ services:
       - ./internal/auth/schema/:/docker-entrypoint-initdb.d
     restart: unless-stopped
     ports:
-    - 5433:5432
-
-#  nginx:
-#    build: ./internal/nginx/.
-#    ports:
-#      - 80:80
-#    links:
-#      - auth
+    - 5432:5432
