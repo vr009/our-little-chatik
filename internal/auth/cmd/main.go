@@ -4,6 +4,7 @@ import (
 	delivery2 "auth/internal/delivery"
 	repo2 "auth/internal/repo"
 	usecase2 "auth/internal/usecase"
+	"auth/middleware"
 	"auth/utils"
 	"context"
 	"github.com/gorilla/mux"
@@ -32,6 +33,7 @@ func main() {
 		s.HandleFunc("/auth/signup", handler.SignUp).Methods("POST")
 		s.HandleFunc("/auth/signin", handler.SignIn).Methods("POST")
 	}
+	r.Use(middleware.CORSMiddleware)
 
 	srv := &http.Server{
 		Handler: r,
