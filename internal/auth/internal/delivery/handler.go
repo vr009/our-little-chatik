@@ -18,6 +18,17 @@ func NewAuthHandler(UCase internal.UseCase) *AuthHandler {
 	}
 }
 
+// SignUp godoc
+// @Summary      SignUp user
+// @Description  sign up for user
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Success      201  {object}  models.User
+// @Failure      400  {object}  models.Error
+// @Failure      404  {object}  models.Error
+// @Failure      500  {object}  models.Error
+// @Router       /auth/signup [post]
 func (a *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	user := models2.User{}
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -34,6 +45,17 @@ func (a *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	response(w, errCode, body)
 }
 
+// SignIn godoc
+// @Summary      SignIn user
+// @Description  for log in of user
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Success      201  {object}  models.User
+// @Failure      400  {object}  models.Error
+// @Failure      404  {object}  models.Error
+// @Failure      500  {object}  models.Error
+// @Router       /auth/signin [post]
 func (a *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 	user := models2.User{}
 	err := json.NewDecoder(r.Body).Decode(&user)
