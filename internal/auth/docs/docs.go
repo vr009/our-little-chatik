@@ -37,9 +37,20 @@ const docTemplate_swagger = `{
                     "auth"
                 ],
                 "summary": "SignIn user",
+                "parameters": [
+                    {
+                        "description": "Login user",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserLogin"
+                        }
+                    }
+                ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.User"
                         }
@@ -78,6 +89,17 @@ const docTemplate_swagger = `{
                     "auth"
                 ],
                 "summary": "SignUp user",
+                "parameters": [
+                    {
+                        "description": "Login user",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserCreate"
+                        }
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "Created",
@@ -128,6 +150,34 @@ const docTemplate_swagger = `{
                 "lastname": {
                     "type": "string"
                 },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserCreate": {
+            "type": "object",
+            "properties": {
+                "firstname": {
+                    "type": "string"
+                },
+                "lastname": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserLogin": {
+            "type": "object",
+            "properties": {
                 "password": {
                     "type": "string"
                 },

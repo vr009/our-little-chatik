@@ -24,6 +24,7 @@ func NewAuthHandler(UCase internal.UseCase) *AuthHandler {
 // @Tags         auth
 // @Accept       json
 // @Produce      json
+// @Param User body models.UserCreate true "Login user"
 // @Success      201  {object}  models.User
 // @Failure      400  {object}  models.Error
 // @Failure      404  {object}  models.Error
@@ -51,7 +52,8 @@ func (a *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 // @Tags         auth
 // @Accept       json
 // @Produce      json
-// @Success      201  {object}  models.User
+// @Param User body models.UserLogin true "Login user"
+// @Success      200  {object}  models.User
 // @Failure      400  {object}  models.Error
 // @Failure      404  {object}  models.Error
 // @Failure      500  {object}  models.Error

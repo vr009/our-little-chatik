@@ -18,6 +18,24 @@ definitions:
       username:
         type: string
     type: object
+  models.UserCreate:
+    properties:
+      firstname:
+        type: string
+      lastname:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  models.UserLogin:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -36,11 +54,18 @@ paths:
       consumes:
       - application/json
       description: for log in of user
+      parameters:
+      - description: Login user
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserLogin'
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
           schema:
             $ref: '#/definitions/models.User'
         "400":
@@ -63,6 +88,13 @@ paths:
       consumes:
       - application/json
       description: sign up for user
+      parameters:
+      - description: Login user
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserCreate'
       produces:
       - application/json
       responses:
