@@ -55,7 +55,7 @@ paths:
       - application/json
       description: for log in of user
       parameters:
-      - description: Login user
+      - description: Create user
         in: body
         name: User
         required: true

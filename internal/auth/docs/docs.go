@@ -39,7 +39,7 @@ const docTemplate_swagger = `{
                 "summary": "SignIn user",
                 "parameters": [
                     {
-                        "description": "Login user",
+                        "description": "Create user",
                         "name": "User",
                         "in": "body",
                         "required": true,

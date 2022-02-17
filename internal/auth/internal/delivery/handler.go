@@ -52,7 +52,7 @@ func (a *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 // @Tags         auth
 // @Accept       json
 // @Produce      json
-// @Param User body models.UserLogin true "Login user"
+// @Param User body models.UserLogin true "Create user"
 // @Success      200  {object}  models.User
 // @Failure      400  {object}  models.Error
 // @Failure      404  {object}  models.Error
