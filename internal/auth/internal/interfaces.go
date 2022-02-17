@@ -5,7 +5,7 @@ import (
 )
 
 type Repo interface {
-	CreateUser(user *models2.User) models2.ErrorCode
+	CreateUser(user *models2.User) (*models2.User, models2.ErrorCode)
 	GetUser(user *models2.User) (*models2.User, models2.ErrorCode)
 }
 

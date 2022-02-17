@@ -19,7 +19,7 @@ func NewPGRepo(service *pgxpool.Pool) *PGRepo {
 	}
 }
 
-func (repo *PGRepo) CreateUser(user *models2.User) models2.ErrorCode {
+func (repo *PGRepo) CreateUser(user *models2.User) (*models2.User, models2.ErrorCode) {
 	if repo.service != nil {
 		uuidWithHyphen := uuid.New()
 		uuidstr := strings.Replace(uuidWithHyphen.String(), "-", "", -1)
@@ -29,10 +29,12 @@ func (repo *PGRepo) CreateUser(user *models2.User) models2.ErrorCode {
 		if _, err := repo.service.Exec(context.Background(),
 			str, uuidstr, user.Username, user.Password, user.Firstname, user.Lastname); err != nil {
 			log.Println(err)
-			return models2.EXISTS
+			return nil, models2.EXISTS
 		}
+		user.Uuid = uuidstr
 	}
-	return models2.OK
+	user.Password = ""
+	return user, models2.OK
 }
 
 func (repo *PGRepo) GetUser(user *models2.User) (*models2.User, models2.ErrorCode) {
@@ -44,5 +46,6 @@ func (repo *PGRepo) GetUser(user *models2.User) (*models2.User, models2.ErrorCod
 		log.Println(err)
 		return nil, models2.NOT_FOUND
 	}
+	userDB.Password = ""
 	return userDB, models2.OK
 }

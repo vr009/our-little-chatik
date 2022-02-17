@@ -19,5 +19,5 @@ func (au *AuthUseCase) SignIn(User *models2.User) (*models2.User, models2.ErrorC
 	return au.repo.GetUser(User)
 }
 func (au *AuthUseCase) SignUp(user *models2.User) (*models2.User, models2.ErrorCode) {
-	return user, au.repo.CreateUser(user)
+	return au.repo.CreateUser(user)
 }

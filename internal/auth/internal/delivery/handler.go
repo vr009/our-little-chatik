@@ -62,15 +62,16 @@ func (a *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 	user := models2.User{}
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		response(w, models2.INTERNAL, nil)
+		errBody, _ := json.Marshal(models2.Error{Message: "Internal error"})
+		response(w, models2.INTERNAL, errBody)
 		return
 	}
 	log.Println(user)
 	authedUsr, errCode := a.UseCase.SignIn(&user)
-
 	body, err := json.Marshal(authedUsr)
 	if err != nil {
-		response(w, models2.INTERNAL, nil)
+		errBody, _ := json.Marshal(models2.Error{Message: "Internal error"})
+		response(w, models2.INTERNAL, errBody)
 		return
 	}
 	response(w, errCode, body)
