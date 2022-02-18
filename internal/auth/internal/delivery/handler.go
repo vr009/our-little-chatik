@@ -31,13 +31,19 @@ func NewAuthHandler(UCase internal.UseCase) *AuthHandler {
 // @Failure      500  {object}  models.Error
 // @Router       /auth/signup [post]
 func (a *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
+	userCreate := models2.UserCreate{}
 	user := models2.User{}
-	err := json.NewDecoder(r.Body).Decode(&user)
+	err := json.NewDecoder(r.Body).Decode(&userCreate)
 	log.Println(err)
 	if err != nil {
 		response(w, models2.INTERNAL, nil)
 		return
 	}
+	user.Password = userCreate.Password
+	user.Username = userCreate.Username
+	user.Lastname = userCreate.Lastname
+	user.Firstname = userCreate.Firstname
+
 	authedUsr, errCode := a.UseCase.SignUp(&user)
 	if errCode != models2.OK {
 		response(w, errCode, nil)
@@ -65,14 +71,20 @@ func (a *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 // @Failure      500  {object}  models.Error
 // @Router       /auth/signin [post]
 func (a *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
+	userLogin := models2.UserLogin{}
+
 	user := models2.User{}
-	err := json.NewDecoder(r.Body).Decode(&user)
+	err := json.NewDecoder(r.Body).Decode(&userLogin)
 	log.Println(err)
 	if err != nil {
 		errBody, _ := json.Marshal(models2.Error{Message: "Internal error"})
 		response(w, models2.INTERNAL, errBody)
 		return
 	}
+
+	user.Password = userLogin.Password
+	user.Username = userLogin.Username
+
 	log.Println(user)
 	authedUsr, errCode := a.UseCase.SignIn(&user)
 	if errCode != models2.OK {
