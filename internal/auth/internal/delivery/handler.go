@@ -33,6 +33,7 @@ func NewAuthHandler(UCase internal.UseCase) *AuthHandler {
 func (a *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	user := models2.User{}
 	err := json.NewDecoder(r.Body).Decode(&user)
+	log.Println(err)
 	if err != nil {
 		response(w, models2.INTERNAL, nil)
 		return
