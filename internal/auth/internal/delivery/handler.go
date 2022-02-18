@@ -38,7 +38,12 @@ func (a *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	authedUsr, errCode := a.UseCase.SignUp(&user)
+	if errCode != models2.OK {
+		response(w, errCode, nil)
+		return
+	}
 	body, err := json.Marshal(authedUsr)
+	log.Println(err)
 	if err != nil {
 		response(w, models2.INTERNAL, nil)
 		return
@@ -61,6 +66,7 @@ func (a *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 func (a *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 	user := models2.User{}
 	err := json.NewDecoder(r.Body).Decode(&user)
+	log.Println(err)
 	if err != nil {
 		errBody, _ := json.Marshal(models2.Error{Message: "Internal error"})
 		response(w, models2.INTERNAL, errBody)
@@ -68,7 +74,13 @@ func (a *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println(user)
 	authedUsr, errCode := a.UseCase.SignIn(&user)
+	if errCode != models2.OK {
+		errBody, _ := json.Marshal(models2.Error{Message: "Some error"})
+		response(w, errCode, errBody)
+		return
+	}
 	body, err := json.Marshal(authedUsr)
+	log.Println(err)
 	if err != nil {
 		errBody, _ := json.Marshal(models2.Error{Message: "Internal error"})
 		response(w, models2.INTERNAL, errBody)
