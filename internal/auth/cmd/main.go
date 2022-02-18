@@ -40,7 +40,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	repom := repo2.NewPGRepo(conn)
+	encr := usecase2.Encrypter_pbkdf2{}
+	repom := repo2.NewPGRepo(conn, encr)
 	usecase := usecase2.NewAuthUseCase(repom)
 	handler := delivery2.NewAuthHandler(usecase)
 
