@@ -14,12 +14,6 @@ type UseCase interface {
 	SignIn(user *models2.User) (*models2.User, models2.ErrorCode)
 }
 
-type SessionRepo interface {
-	SessionOn(user models2.User) (string, error)
-	SessionOff(user models2.User) error
-}
-
-type SessionUsecase interface {
-	Login(user models2.User) (string, error)
-	Logout(user models2.User) error
+type Encrypter interface {
+	EncryptString(stringToEncrypt, salt string) string
 }

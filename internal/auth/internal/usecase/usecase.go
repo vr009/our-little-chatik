@@ -18,6 +18,6 @@ func NewAuthUseCase(userRepo internal.Repo) *AuthUseCase {
 func (au *AuthUseCase) SignIn(User *models2.User) (*models2.User, models2.ErrorCode) {
 	return au.repo.GetUser(User)
 }
-func (au *AuthUseCase) SignUp(user *models2.User) (*models2.User, models2.ErrorCode) {
-	return au.repo.CreateUser(user)
+func (au *AuthUseCase) SignUp(User *models2.User) (*models2.User, models2.ErrorCode) {
+	return au.repo.CreateUser(User)
 }

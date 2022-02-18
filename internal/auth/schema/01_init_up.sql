@@ -3,7 +3,8 @@ create table users (
     username varchar(50) not null,
     password varchar(150) not null,
     firstname varchar(50) not null,
-    lastname varchar(50) not null
+    lastname varchar(50) not null,
+    salt varchar() not null
 );
 
 create unique index on users (username) include (password);
