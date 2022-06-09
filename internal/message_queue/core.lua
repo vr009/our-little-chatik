@@ -17,7 +17,7 @@ box.schema.space.create('msg_queue',
                        { 'created_at', type = 'number' } }
         })
 
-box.space.msg_queue:create_index('chat_index', {unique = true, if_not_exists = true, parts = { { 1, 'uuid' }, {6, 'number'} }})
+box.space.msg_queue:create_index('chat_index', {if_not_exists = true, parts = { { 1, 'uuid' }, {6, 'number'} }})
 
 box.space.msg_queue:create_index('msg_index', {if_not_exists = true, parts = { { 2, 'uuid' }}})
 
@@ -34,7 +34,7 @@ queue._wait = fiber.channel()
 
 function queue.put(chat_id, sender_id, receiver_id, payload)
     local msg_id = uuid()
-    local created_at = os.time()
+    local created_at = fiber.time()
 
     print(chat_id, sender_id, receiver_id, payload)
 
@@ -52,12 +52,18 @@ function queue.put(chat_id, sender_id, receiver_id, payload)
     end
     chats_upd[chat_id] = msg_id:str()
 
-    return box.space.msg_queue:insert{
+    local res = box.space.msg_queue:insert{
         uuid.fromstr(chat_id),
         msg_id,
         uuid.fromstr(sender_id),
         uuid.fromstr(receiver_id),
         payload, created_at}
+
+    if res ~= nil then
+        return{chat_id, msg_id:str(), sender_id, receiver_id, payload, created_at}
+    end
+
+    return res
 end
 
 
@@ -74,7 +80,7 @@ function queue.take_new_messages_from_space(chat_id, since_msg_id, sender_id, re
     local batch = {}
     for _, tuple in box.space.msg_queue.index.chat_index:pairs({ uuid.fromstr(chat_id) }) do
         if (since ~=-1 and since <= tuple[6]) or since_msg_id == nil then
-            table.insert(batch, tuple)
+            table.insert(batch, { tuple[1]:str(), tuple[2]:str(), tuple[3]:str(), tuple[4]:str(), tuple[5], tuple[6] })
         end
     end
     return batch
@@ -87,7 +93,7 @@ function queue.fetch_chat_list_update(chat_list)
         local msg_id = chats_upd[chat_id]
         if msg_id ~= nil then
             local tuple = box.space.msg_queue.index.msg_index:get(uuid.fromstr(msg_id))
-            table.insert(batch, tuple)
+            table.insert(batch, { tuple[1]:str(), tuple[2]:str(), tuple[3]:str(), tuple[4]:str(), tuple[5], tuple[6] })
         end
     end
     return batch
