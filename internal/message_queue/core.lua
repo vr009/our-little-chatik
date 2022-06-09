@@ -36,26 +36,27 @@ function queue.put(chat_id, sender_id, receiver_id, payload)
     local msg_id = uuid()
     local created_at = os.time()
 
-    if chats[chat_id:str()] == nil then
-        chats[chat_id:str()] = {}
+    print(chat_id, sender_id, receiver_id, payload)
+
+    if chats[chat_id] == nil then
+        chats[chat_id] = {}
     end
 
-    if not chats[chat_id:str()][receiver_id:str()] or chats[chat_id:str()][receiver_id:str()] == -1 then
-        chats[chat_id:str()][receiver_id:str()] = created_at
+    if not chats[chat_id][receiver_id] or chats[chat_id][receiver_id] == -1 then
+        chats[chat_id][receiver_id] = created_at
     end
 
     -- we put the id of the last message for chat list update
-    if not chats_upd[chat_id:str()] then
-        chats_upd[chat_id:str()] = {}
+    if not chats_upd[chat_id] then
+        chats_upd[chat_id] = {}
     end
-    chats_upd[chat_id:str()] = msg_id:str()
-    print('1', chats_upd[chat_id:str()])
+    chats_upd[chat_id] = msg_id:str()
 
     return box.space.msg_queue:insert{
-        chat_id,
+        uuid.fromstr(chat_id),
         msg_id,
-        sender_id,
-        receiver_id,
+        uuid.fromstr(sender_id),
+        uuid.fromstr(receiver_id),
         payload, created_at}
 end
 
@@ -63,15 +64,15 @@ end
 function queue.take_new_messages_from_space(chat_id, since_msg_id, sender_id, receiver_id)
     local since = 0
 
-    if not chats[chat_id:str()] then
+    if not chats[chat_id] then
         return {}
     end
 
-    since = chats[chat_id:str()][receiver_id:str()]
-    chats[chat_id:str()][receiver_id:str()] = -1
+    since = chats[chat_id][receiver_id]
+    chats[chat_id][receiver_id] = -1
 
     local batch = {}
-    for _, tuple in box.space.msg_queue.index.chat_index:pairs({ chat_id }) do
+    for _, tuple in box.space.msg_queue.index.chat_index:pairs({ uuid.fromstr(chat_id) }) do
         if (since ~=-1 and since <= tuple[6]) or since_msg_id == nil then
             table.insert(batch, tuple)
         end
@@ -82,10 +83,8 @@ end
 
 function queue.fetch_chat_list_update(chat_list)
     local batch = {}
-    print(chat_list)
     for _, chat_id in ipairs(chat_list) do
         local msg_id = chats_upd[chat_id]
-        print('2', msg_id)
         if msg_id ~= nil then
             local tuple = box.space.msg_queue.index.msg_index:get(uuid.fromstr(msg_id))
             table.insert(batch, tuple)
@@ -101,6 +100,10 @@ rawset(_G, 'take_msgs', queue.take_new_messages_from_space)
 rawset(_G, 'fetch_chats_upd', queue.fetch_chat_list_update)
 
 box.once('debug', function() box.schema.user.grant('guest', 'super') end)
+
+box.schema.user.create('test', {password = 'test'})
+box.schema.user.grant('test', 'execute', 'universe')
+box.schema.user.grant('test', 'read,write', 'space', 'msg_queue')
 
 return queue
 
