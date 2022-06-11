@@ -71,7 +71,11 @@ function queue.take_new_messages_from_space(chat_id, since_msg_id, sender_id, re
     local since = 0
 
     if not chats[chat_id] then
-        return {}
+        return nil
+    end
+
+    if chats[chat_id][receiver_id] == -1 then
+        return nil
     end
 
     since = chats[chat_id][receiver_id]
@@ -83,6 +87,7 @@ function queue.take_new_messages_from_space(chat_id, since_msg_id, sender_id, re
             table.insert(batch, { tuple[1]:str(), tuple[2]:str(), tuple[3]:str(), tuple[4]:str(), tuple[5], tuple[6] })
         end
     end
+    print("sending", batch)
     return batch
 end
 

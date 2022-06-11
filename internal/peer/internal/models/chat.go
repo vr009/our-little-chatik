@@ -8,6 +8,7 @@ type Chat struct {
 	ChatID       uuid.UUID `json:"chatID"`
 	ReceiverID   uuid.UUID `json:"receiverID"`
 	SenderID     uuid.UUID `json:"senderID"`
+	ChatSibling  *Chat
 	ReadyForRecv chan []Message
 	ReadyForSend chan *Message
 	msgForSend   *Message  // message to send to db

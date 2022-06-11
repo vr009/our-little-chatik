@@ -51,8 +51,8 @@ func (m *MessageManagerImpl) Work() {
 
 func (m *MessageManagerImpl) EnqueueChatIfNotExists(msg *models.Message) (chat *models.Chat) {
 	for e := m.chatList.Front(); e != nil; e = e.Next() {
-		*chat = e.Value.(models.Chat)
-		if chat.ChatID == msg.ChatID {
+		chat = e.Value.(*models.Chat)
+		if chat.ChatID == msg.ChatID && chat.ReceiverID == msg.ReceiverID {
 			return chat
 		}
 	}

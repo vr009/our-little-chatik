@@ -139,7 +139,12 @@ func (ws *WebSocketClient) read() {
 			ws.currentChat = chat
 		}
 
-		err = ws.uc.SendMessage(msg, chat)
+		msgForSibling := models.NewMessageForAnotherSide(msg)
+		if chat.ChatSibling == nil {
+			chat.ChatSibling = ws.manager.EnqueueChatIfNotExists(msgForSibling)
+		}
+
+		err = ws.uc.SendMessage(msgForSibling, chat.ChatSibling)
 		if err != nil {
 			debug.Fatal(err)
 		}

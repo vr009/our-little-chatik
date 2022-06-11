@@ -15,6 +15,17 @@ type Message struct {
 	CreatedAt  float64   `json:"-"`
 }
 
+func NewMessageForAnotherSide(msg *Message) *Message {
+	return &Message{
+		ChatID:     msg.ChatID,
+		ReceiverID: msg.SenderID,
+		SenderID:   msg.ReceiverID,
+		MsgID:      msg.MsgID,
+		Payload:    msg.Payload,
+		CreatedAt:  msg.CreatedAt,
+	}
+}
+
 func (m *Message) EncodeMsgpack(e *msgpack.Encoder) error {
 	return nil
 }
