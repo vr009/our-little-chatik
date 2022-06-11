@@ -12,7 +12,7 @@ RUN go mod download
 
 RUN go mod tidy
 
-RUN go build -o chat-service ./cmd/main.go
+RUN go build -o chat_history-service ./cmd/main.go
 
 
 CMD ["./chat-service"]
