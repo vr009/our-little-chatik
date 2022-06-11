@@ -7,12 +7,13 @@ import (
 )
 
 type Message struct {
-	ChatID     uuid.UUID `json:"chatID"`
-	ReceiverID uuid.UUID `json:"receiverID"`
-	SenderID   uuid.UUID `json:"senderID"`
-	MsgID      uuid.UUID `json:"-"`
-	Payload    string    `json:"payload"`
-	CreatedAt  float64   `json:"-"`
+	ChatID       uuid.UUID `json:"chatID"`
+	ReceiverID   uuid.UUID `json:"receiverID"`
+	SenderID     uuid.UUID `json:"senderID"`
+	MsgID        uuid.UUID `json:"-"`
+	Payload      string    `json:"payload"`
+	CreatedAt    float64   `json:"-"`
+	SessionStart bool      `json:"sessionStart,omitempty"`
 }
 
 func NewMessageForAnotherSide(msg *Message) *Message {

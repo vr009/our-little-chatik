@@ -144,6 +144,10 @@ func (ws *WebSocketClient) read() {
 			chat.ChatSibling = ws.manager.EnqueueChatIfNotExists(msgForSibling)
 		}
 
+		if msg.SessionStart {
+			continue
+		}
+
 		err = ws.uc.SendMessage(msgForSibling, chat.ChatSibling)
 		if err != nil {
 			debug.Fatal(err)
