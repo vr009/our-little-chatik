@@ -83,7 +83,7 @@ func (ws *WebSocketClient) write() {
 			}
 
 			for _, msg := range messages {
-				debug.Println("sending", msg)
+				//debug.Println("sending", msg)
 				buf, err := json.Marshal(msg)
 				if err != nil {
 					debug.Fatal(err)
@@ -125,11 +125,11 @@ func (ws *WebSocketClient) read() {
 			}
 			break
 		}
-		debug.Println(string(message))
+		//debug.Println(string(message))
 		msg := &models.Message{}
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 		err = json.Unmarshal(message, msg)
-		debug.Println(msg)
+		//debug.Println(msg)
 		if err != nil {
 			debug.Fatalf("failed to unmarshal message")
 		}

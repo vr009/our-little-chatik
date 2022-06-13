@@ -27,14 +27,6 @@ func (c *Chat) FetchMsgsToRecv() []Message {
 	return <-c.ReadyForRecv
 }
 
-func (c *Chat) waitForRecv() {
-	<-c.ReadyForRecv
-}
-
-func (c *Chat) waitForSend() {
-	<-c.ReadyForSend
-}
-
 func NewChatFromMsg(msg *Message) *Chat {
 	chat := &Chat{
 		ChatID:     msg.ChatID,
@@ -42,7 +34,7 @@ func NewChatFromMsg(msg *Message) *Chat {
 		SenderID:   msg.SenderID,
 	}
 
-	chat.ReadyForRecv = make(chan []Message)
+	chat.ReadyForRecv = make(chan []Message, 100)
 	chat.ReadyForSend = make(chan *Message)
 	return chat
 }

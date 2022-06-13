@@ -38,7 +38,7 @@ func (m *MessageManagerImpl) Work() {
 			select {
 			case msg := <-chat.ReadyForSend:
 				m.repo.SendPayload(msg, chat)
-				debug.Println("sending: ", msg)
+				//debug.Println("sending: ", msg)
 			default:
 				if msgs != nil {
 					chat.PutMsgsToRecv(msgs)

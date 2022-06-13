@@ -20,7 +20,11 @@ func NewTarantoolRepo(conn *tarantool.Connection) *TarantoolRepo {
 
 func (tt *TarantoolRepo) SendPayload(msg *models.Message, chat *models.Chat) error {
 	conn := tt.conn
-	resp, err := conn.Call("put", []interface{}{chat.ChatID.String(), msg.SenderID.String(), msg.ReceiverID.String(), msg.Payload})
+	resp, err := conn.Call("put", []interface{}{
+		chat.ChatID.String(),
+		msg.SenderID.String(),
+		msg.ReceiverID.String(),
+		msg.Payload})
 	if err != nil {
 		return err
 	}
@@ -49,9 +53,9 @@ func (tt *TarantoolRepo) FetchUpdates(chat *models.Chat) ([]models.Message, erro
 		return nil, nil
 	}
 
-	if len(msgs) > 0 {
-		log.Println("from tt: ", msgs)
-	}
+	//if len(msgs) > 0 {
+	//	log.Println("from tt: ", msgs)
+	//}
 
 	return msgs, nil
 }

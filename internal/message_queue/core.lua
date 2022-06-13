@@ -83,11 +83,11 @@ function queue.take_new_messages_from_space(chat_id, since_msg_id, sender_id, re
 
     local batch = {}
     for _, tuple in box.space.msg_queue.index.chat_index:pairs({ uuid.fromstr(chat_id) }) do
-        if (since ~=-1 and since <= tuple[6]) or since_msg_id == nil then
+        if (since ~= nil and since ~=-1 and since <= tuple[6]) or since_msg_id == nil then
             table.insert(batch, { tuple[1]:str(), tuple[2]:str(), tuple[3]:str(), tuple[4]:str(), tuple[5], tuple[6] })
+            print("sending", tuple[1]:str(), tuple[2]:str(), tuple[3]:str(), tuple[4]:str(), tuple[5], tuple[6])
         end
     end
-    print("sending", batch)
     return batch
 end
 
@@ -104,7 +104,9 @@ function queue.fetch_chat_list_update(chat_list)
     return batch
 end
 
-
+function queue.flush_all()
+    return box.space.msg_queue:select()
+end
 
 rawset(_G, 'put', queue.put)
 rawset(_G, 'take_msgs', queue.take_new_messages_from_space)

@@ -11,8 +11,6 @@ func NewPeerUsecaseImpl() *PeerUsecaseImpl {
 	return &PeerUsecaseImpl{}
 }
 
-// TODO:
-
 func (pu *PeerUsecaseImpl) SendMessage(msg *models.Message, chat *models.Chat) error {
 	chat.PutMsgToSend(msg)
 	return nil
