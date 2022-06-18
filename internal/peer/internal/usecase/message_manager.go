@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"container/list"
-	debug "log"
 	"our-little-chatik/internal/peer/internal"
 	"our-little-chatik/internal/peer/internal/models"
 )
@@ -38,11 +37,9 @@ func (m *MessageManagerImpl) Work() {
 			select {
 			case msg := <-chat.ReadyForSend:
 				m.repo.SendPayload(msg, chat)
-				//debug.Println("sending: ", msg)
 			default:
 				if msgs != nil {
 					chat.PutMsgsToRecv(msgs)
-					debug.Println("some new messages here: ", msgs)
 				}
 			}
 		}
