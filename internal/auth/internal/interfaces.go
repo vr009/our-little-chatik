@@ -1,17 +1,15 @@
 package internal
 
-import (
-	models2 "auth/internal/models"
-)
+import "auth/internal/models"
 
-type Repo interface {
-	CreateUser(User models2.User) (string, error)
-	GetUser(User models2.User) (string, string, error)
-	GetAllUser() ([]models2.User, error)
+type AuthRepo interface {
+	CreateSession(session models.Session) models.Session
+	DeleteSession(session models.Session)
+	GetSession(session models.Session) models.Session
 }
 
-type UseCase interface {
-	SignIn(User models2.User) (string, error)
-	SignUp(User models2.User) (string, error)
-	FetchUsers() ([]models2.User, error)
+type AuthUseCase interface {
+	CreateSession(session models.Session) models.Session
+	DeleteSession(session models.Session)
+	GetSession(session models.Session) models.Session
 }

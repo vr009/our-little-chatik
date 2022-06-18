@@ -1,42 +1,26 @@
 package main
 
 import (
-	delivery2 "auth/internal/delivery"
+	"auth/internal/delivery"
 	repo2 "auth/internal/repo"
-	usecase2 "auth/internal/usecase"
+	"auth/internal/usecase"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	"time"
 )
 
 func main() {
-	//	repom := repo.NewmockRepo()
-	repom := repo2.NewPGRepo()
-	repom.InitDB()
-	defer repom.Close()
+	repo := repo2.NewDataBase()
+	useCase := usecase.NewAuthUseCase(repo)
+	handler := delivery.NewAuthHandler(useCase)
 
-	usecase := usecase2.NewAuthUseCase(repom, "brr", []byte("brr"), time.Duration(150000000000))
-	handler := delivery2.NewAuthHandler(usecase)
+	router := mux.NewRouter()
 
-	r := mux.NewRouter()
-	r.HandleFunc("/auth/signup", handler.SignUp).Methods("POST")
-	r.HandleFunc("/auth/signin", handler.SignIn).Methods("POST")
+	router.HandleFunc("/api/v1/auth", handler.GetSession).Methods("GET")
+	router.HandleFunc("/api/v1/auth", handler.PostSession).Methods("POST")
+	router.HandleFunc("/api/v1/auth", handler.DeleteSession).Methods("DELETE")
 
-	s := r.PathPrefix("").Subrouter()
-	s.HandleFunc("/auth", func(writer http.ResponseWriter, request *http.Request) {
-		writer.WriteHeader(http.StatusOK)
-		writer.Write([]byte("Got it"))
-	}).Methods("GET")
-	s.HandleFunc("/fetch", handler.GetUsersList).Methods("GET")
-	s.Use(usecase.AuthMiddleWare)
-
-	srv := &http.Server{
-		Handler: r,
-		Addr:    ":8080",
-		//WriteTimeout: 15 * time.Second,
-		//ReadTimeout:  15 * time.Second,
-	}
+	srv := &http.Server{Handler: router, Addr: ":8080"}
 
 	log.Fatal(srv.ListenAndServe())
 }
