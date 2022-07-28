@@ -1,42 +1,66 @@
 package main
 
 import (
-	delivery2 "auth/internal/delivery"
+	"auth/internal/delivery"
 	repo2 "auth/internal/repo"
-	usecase2 "auth/internal/usecase"
+	"auth/internal/usecase"
+	"fmt"
+	"github.com/go-redis/redis/v9"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	"time"
 )
 
 func main() {
-	//	repom := repo.NewmockRepo()
-	repom := repo2.NewPGRepo()
-	repom.InitDB()
-	defer repom.Close()
 
-	usecase := usecase2.NewAuthUseCase(repom, "brr", []byte("brr"), time.Duration(150000000000))
-	handler := delivery2.NewAuthHandler(usecase)
+	fmt.Println("Starting..")
 
-	r := mux.NewRouter()
-	r.HandleFunc("/auth/signup", handler.SignUp).Methods("POST")
-	r.HandleFunc("/auth/signin", handler.SignIn).Methods("POST")
-
-	s := r.PathPrefix("").Subrouter()
-	s.HandleFunc("/auth", func(writer http.ResponseWriter, request *http.Request) {
-		writer.WriteHeader(http.StatusOK)
-		writer.Write([]byte("Got it"))
-	}).Methods("GET")
-	s.HandleFunc("/fetch", handler.GetUsersList).Methods("GET")
-	s.Use(usecase.AuthMiddleWare)
-
-	srv := &http.Server{
-		Handler: r,
-		Addr:    ":8080",
-		//WriteTimeout: 15 * time.Second,
-		//ReadTimeout:  15 * time.Second,
+	dbInfo := redis.Options{
+		Addr:     ":6379",
+		Password: "", // no password set
+		DB:       0,  // use default DB
 	}
+
+	client := redis.NewClient(&dbInfo)
+
+	if client == nil {
+		panic("client doesnt work")
+	}
+
+	fmt.Printf("Redis started at port %s \n", dbInfo.Addr)
+
+	repo := repo2.NewDataBase(client)
+	useCase := usecase.NewAuthUseCase(repo)
+	handler := delivery.NewAuthHandler(useCase)
+
+	router := mux.NewRouter()
+
+	// 1. – РАБОТАЕТ!)
+	// Получение Token пользователя по UserID
+	// (UserID) => Token
+	router.HandleFunc("/api/v1/auth/token", handler.GetToken).Methods("GET")
+
+	// 2. – РАБОТАЕТ!)
+	// Получение UserID по Token
+	// (Token) => UserID
+	router.HandleFunc("/api/v1/auth/user", handler.GetUser).Methods("GET")
+
+	// 3. – РАБОТАЕТ!)
+	// Добавление нового UserID и создание Token
+	// (UserID) => Session {
+	//	   UserID: Token
+	//	   Token: UserID
+	//	}
+	router.HandleFunc("/api/v1/auth", handler.PostSession).Methods("POST")
+
+	// 4.
+	// Удаление сессии по Token
+	// Token –> Session {}
+	router.HandleFunc("/api/v1/auth", handler.DeleteSession).Methods("DELETE")
+
+	srv := &http.Server{Handler: router, Addr: ":8080"}
+
+	fmt.Printf("Main.go started at port %s \n", srv.Addr)
 
 	log.Fatal(srv.ListenAndServe())
 }
